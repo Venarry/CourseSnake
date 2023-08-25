@@ -2,17 +2,23 @@ using UnityEngine;
 
 public class SnakeRotation : MonoBehaviour
 {
-    [SerializeField] private Transform _targetPositionPoint;
     [SerializeField] private float _rotateSpeed = 150;
+    [SerializeField] private SnakeMovement _snakeMovement;
 
     private Vector3 _targetPosition;
     private Plane _plane;
     private Camera _camera;
 
+    private float _movementSpeed => _snakeMovement.CurrentSpeed;
+
     private void Awake()
     {
-        _camera = Camera.main;
         _plane = new Plane(Vector3.up, Vector3.zero);
+    }
+
+    public void Init(Camera camera)
+    {
+        _camera = camera;
     }
 
     public void Update()
@@ -29,7 +35,6 @@ public class SnakeRotation : MonoBehaviour
         if (_plane.Raycast(ray, out float distance))
         {
             _targetPosition = ray.GetPoint(distance);
-            _targetPositionPoint.position = _targetPosition;
         }
     }
 
@@ -43,6 +48,6 @@ public class SnakeRotation : MonoBehaviour
         else
             targetRotation = Quaternion.LookRotation(transform.forward);
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotateSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotateSpeed * _movementSpeed * Time.deltaTime);
     }
 }

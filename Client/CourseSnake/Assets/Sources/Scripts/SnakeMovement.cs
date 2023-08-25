@@ -1,23 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
-    [SerializeField] private float _speed = 6;
+    [SerializeField] private float _defaultSpeed = 8;
     [SerializeField] private float _boostSpeedMultiplayer = 2.5f;
 
-    public float Speed => _speed;
+    public event Action BoostUsed;
+
+    public float CurrentSpeed { get; private set; }
 
     private void Update()
     {
-        float targetSpeed = _speed;
+        CurrentSpeed = _defaultSpeed;
 
         if (Input.GetMouseButton(0))
         {
-            targetSpeed = _speed * _boostSpeedMultiplayer;
+            CurrentSpeed = _defaultSpeed * _boostSpeedMultiplayer;
         }
 
-        transform.position += targetSpeed * Time.deltaTime * transform.forward;
+        transform.position += CurrentSpeed * Time.deltaTime * transform.forward;
     }
 }

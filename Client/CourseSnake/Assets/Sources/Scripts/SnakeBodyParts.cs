@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class SnakeBodyParts : MonoBehaviour
 {
     [SerializeField] private float _distanceForSave = 1;
-    [SerializeField] private List<Vector3> _history;
     [SerializeField] private List<Transform> _snakeParts;
     [SerializeField] private Transform _head;
 
+    private List<Vector3> _history;
+    private SnakeFactory _snakeFactory;
+    private Vector3 _partSpawnPosition => _history[_history.Count - 1];
+
     private void Awake()
     {
+        _history = new List<Vector3>();
         _history.Add(_head.position);
 
         for (int i = 0; i < _snakeParts.Count; i++)
@@ -19,13 +24,21 @@ public class SnakeBodyParts : MonoBehaviour
         }
     }
 
+    public void Init(SnakeFactory snakeFactory)
+    {
+        _snakeFactory = snakeFactory;
+
+        Transform tail = _snakeFactory.CreateTail(_partSpawnPosition);
+        Add(tail);
+    }
+
     private void Update()
     {
         TransformBody();
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Add();
+            AddBodyPart();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -34,14 +47,19 @@ public class SnakeBodyParts : MonoBehaviour
         }
     }
 
-    public void Add()
+    public void AddBodyPart()
     {
-        Transform bodyPartPrefab = Resources.Load<Transform>(ResourcesPath.SnakeBodyPart);
-        Transform bodyPart = Instantiate(bodyPartPrefab, _history[_history.Count - 1], Quaternion.identity);
+        Transform bodyPart = _snakeFactory.CreateBody(_history[_history.Count - 1]);
+        Add(bodyPart);
+    }
 
-        int lastAvailableSlotIndex = _snakeParts.Count - 1;
-        _snakeParts.Insert(lastAvailableSlotIndex, bodyPart);
-        _history.Add(bodyPart.position);
+    private void Add(Transform part)
+    {
+        int targetSlotIndex = 0;
+        _snakeParts.Insert(targetSlotIndex, part);
+        _history.Add(part.position);
+
+        Resize();
     }
 
     public void Remove()
@@ -49,10 +67,23 @@ public class SnakeBodyParts : MonoBehaviour
         if (_snakeParts.Count < 2)
             return;
 
-        Transform lastAvailableSlot = _snakeParts[_snakeParts.Count - 2];
-        Destroy(lastAvailableSlot.gameObject);
-        _snakeParts.Remove(lastAvailableSlot);
+        Transform targetSlot = _snakeParts[0];
+        Destroy(targetSlot.gameObject);
+        _snakeParts.Remove(targetSlot);
         _history.RemoveAt(_history.Count - 1);
+
+        Resize();
+    }
+
+    private void Resize()
+    {
+        float minSize = 0.6f;
+
+        for (int i = 0; i < _snakeParts.Count; i++)
+        {
+            float size = Math.Clamp((float)(_snakeParts.Count - i) / _snakeParts.Count, minSize, 1);
+            _snakeParts[i].localScale = new Vector3(size, size, size);
+        }
     }
 
     private void TransformBody()
@@ -72,6 +103,15 @@ public class SnakeBodyParts : MonoBehaviour
         for (int i = 0; i < _snakeParts.Count; i++)
         {
             _snakeParts[i].position = Vector3.Lerp(_history[i + 1], _history[i], deltaDistance / _distanceForSave);
+
+            Vector3 lookDirection = _history[i + 1] - _history[i];
+            Quaternion targetRotation;
+            if (lookDirection != Vector3.zero)
+                targetRotation = Quaternion.LookRotation(lookDirection);
+            else
+                targetRotation = Quaternion.identity;
+
+            _snakeParts[i].rotation = Quaternion.Lerp(_snakeParts[i].rotation, targetRotation, deltaDistance / _distanceForSave);
         }
     }
 }
