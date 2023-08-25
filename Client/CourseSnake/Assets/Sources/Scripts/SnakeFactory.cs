@@ -9,14 +9,22 @@ public class SnakeFactory
 
     public SnakeView CreateSnake(Vector3 position)
     {
+        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
+
         CameraMovement mainCamera = Object.Instantiate(_mainCameraPrefab);
         Camera camera = mainCamera.GetComponent<Camera>();
 
-        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
-        snakeView.GetComponent<SnakeBodyParts>().Init(this);
+        SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
+
+        snakeBodyParts.Init(this);
         snakeView.GetComponent<SnakeRotation>().Init(camera);
 
-        mainCamera.SetTarget(snakeView.transform);
+        SnakeScoreModel snakeScoreModel = new();
+        SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts);
+
+        snakeView.Init(snakeScorePresenter);
+
+        mainCamera.SetTarget(snakeView.transform); // камеру передавать
         return snakeView;
     }
 

@@ -1,27 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SnakeBodyParts))]
-[RequireComponent(typeof(SnakeMovement))]
-[RequireComponent(typeof(SnakeRotation))]
 public class SnakeView : MonoBehaviour
 {
-    private SnakeMovement _snakeMovement;
-    private SnakeBodyParts _snakeBodyParts;
+    private SnakeScorePresenter _snakeScorePresenter;
+    private bool _isInitialized;
 
-    private void Awake()
+    public void Init(SnakeScorePresenter snakeScorePresenter)
     {
-        _snakeBodyParts = GetComponent<SnakeBodyParts>();
+        gameObject.SetActive(false);
+
+        _snakeScorePresenter = snakeScorePresenter;
+        _isInitialized = true;
+
+        gameObject.SetActive(true);
     }
 
     private void OnEnable()
     {
-        
+        if (_isInitialized == false)
+            return;
+
+        _snakeScorePresenter.Enable();
     }
 
-    public void AddBodyPart()
+    private void OnDisable()
     {
-        _snakeBodyParts.AddBodyPart();
+        if (_isInitialized == false)
+            return;
+
+        _snakeScorePresenter.Disable();
+    }
+
+    public void AddScore(float value)
+    {
+        _snakeScorePresenter.AddScore(value);
     }
 }

@@ -38,36 +38,63 @@ public class SnakeBodyParts : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            AddBodyPart();
+            AddPart();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            Remove();
+            RemovePart();
         }
     }
 
-    public void AddBodyPart()
+    public void AddPart()
     {
         Transform bodyPart = _snakeFactory.CreateBody(_history[_history.Count - 1]);
         Add(bodyPart);
     }
 
+    public void SetBodyPart(int value)
+    {
+        if (_snakeParts.Count == value)
+            return;
+
+        if(_snakeParts.Count < value)
+        {
+            for (int i = 0; i < value - _snakeParts.Count; i++)
+            {
+                AddPart();
+            }
+        }
+        else
+        {
+            for (int i = 0; i < value - _snakeParts.Count; i++)
+            {
+                RemovePart();
+            }
+        }
+    }
+
     private void Add(Transform part)
     {
-        int targetSlotIndex = 0;
+        int targetSlotIndex;
+
+        if (_snakeParts.Count == 0)
+            targetSlotIndex = 0;
+        else
+            targetSlotIndex = _snakeParts.Count - 1;
+
         _snakeParts.Insert(targetSlotIndex, part);
         _history.Add(part.position);
 
         Resize();
     }
 
-    public void Remove()
+    public void RemovePart()
     {
         if (_snakeParts.Count < 2)
             return;
 
-        Transform targetSlot = _snakeParts[0];
+        Transform targetSlot = _snakeParts[_snakeParts.Count - 2];
         Destroy(targetSlot.gameObject);
         _snakeParts.Remove(targetSlot);
         _history.RemoveAt(_history.Count - 1);
