@@ -1,4 +1,4 @@
-import { Room, Client } from "colyseus";
+import { Room, Client, updateLobby } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class MyVector3 extends Schema
@@ -32,6 +32,50 @@ export class MyVector3 extends Schema
 export class Player extends Schema {
     @type(MyVector3)
     Position = new MyVector3(0, 0, 0);
+
+    @type(MyVector3)
+    Rotation = new MyVector3(0, 0, 0);
+
+    @type(MyVector3)
+    Direction = new MyVector3(0, 0, 0);
+
+    @type("boolean")
+    BoostState = false;
+
+    @type("number")
+    Score = 0;
+
+    SetPosition(position: MyVector3)
+    {
+        this.Position.SetValues(position);
+    }
+
+    SetRotation(rotation: MyVector3)
+    {
+        this.Rotation.SetValues(rotation);
+    }
+
+    SetDirection(position: MyVector3)
+    {
+        this.Direction.SetValues(position);
+    }
+
+    SetBoostState(state: boolean)
+    {
+        this.BoostState = state;
+    }
+
+    SetScore(score: number)
+    {
+        this.Score = score;
+    }
+
+    constructor (position: MyVector3)
+    {
+        super();
+
+        this.Position.SetValues(position);
+    }
 }
 
 export class State extends Schema {
@@ -40,17 +84,37 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    CreatePlayer(sessionId: string) {
-        this.players.set(sessionId, new Player());
+    CreatePlayer(sessionId: string, position: MyVector3) {
+        this.players.set(sessionId, new Player(position));
     }
 
     RemovePlayer(sessionId: string) {
         this.players.delete(sessionId);
     }
 
-    MovePlayer (sessionId: string, movement: any) 
+    SetPlayerPosition(sessionId: string, position: MyVector3) 
     {
+        this.players.get(sessionId).SetPosition(position);
+    }
 
+    SetPlayerRotation(sessionId: string, rotation: MyVector3) 
+    {
+        this.players.get(sessionId).SetRotation(rotation);
+    }
+
+    SetPlayerDirection(sessionId: string, direction: MyVector3) 
+    {
+        this.players.get(sessionId).SetDirection(direction);
+    }
+
+    SetBoostState(sessionId: string, state: boolean)
+    {
+        this.players.get(sessionId).SetBoostState(state);
+    }
+
+    SetPlayerScore(sessionId: string, score: number) 
+    {
+        this.players.get(sessionId).SetScore(score);
     }
 }
 
@@ -61,10 +125,36 @@ export class StateHandlerRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
+        this.setMetadata(options).then(() => updateLobby(this));
 
-        this.onMessage("move", (client, data) => {
-            console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
-            this.state.MovePlayer(client.sessionId, data);
+        this.onMessage("PlayerSpawned", (client, position) => 
+        {
+            this.state.CreatePlayer(client.sessionId, position);
+        });
+
+        this.onMessage("Position", (client, position) => 
+        {
+            this.state.SetPlayerPosition(client.sessionId, position);
+        });
+
+        this.onMessage("Rotation", (client, rotation) => 
+        {
+            this.state.SetPlayerRotation(client.sessionId, rotation);
+        });
+
+        this.onMessage("Direction", (client, direction) => 
+        {
+            this.state.SetPlayerDirection(client.sessionId, direction);
+        });
+
+        this.onMessage("Score", (client, score) => 
+        {
+            this.state.SetPlayerScore(client.sessionId, score);
+        });
+
+        this.onMessage("BoostState", (client, state) => 
+        {
+            this.state.SetBoostState(client.sessionId, state);
         });
     }
 
@@ -72,9 +162,9 @@ export class StateHandlerRoom extends Room<State> {
         return true;
     }
 
-    onJoin (client: Client) {
-        client.send("hello", "world");
-        this.state.CreatePlayer(client.sessionId);
+    onJoin (client: Client) 
+    {
+        //this.state.CreatePlayer(client.sessionId);
     }
 
     onLeave (client) {
@@ -84,5 +174,4 @@ export class StateHandlerRoom extends Room<State> {
     onDispose () {
         console.log("Dispose StateHandlerRoom");
     }
-
 }
