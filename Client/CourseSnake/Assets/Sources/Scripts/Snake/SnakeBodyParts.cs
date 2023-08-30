@@ -10,6 +10,7 @@ public class SnakeBodyParts : MonoBehaviour
     private List<Vector3> _positionHistory;
     private List<Quaternion> _rotationHistory;
     private SnakeFactory _snakeFactory;
+    private Color _color;
     private bool _isInitialized;
 
     private Vector3 PartSpawnPosition => _positionHistory[_positionHistory.Count - 1];
@@ -33,37 +34,19 @@ public class SnakeBodyParts : MonoBehaviour
         }
     }
 
-    public void Init(SnakeFactory snakeFactory)
+    public void Init(SnakeFactory snakeFactory, Color color)
     {
         _snakeFactory = snakeFactory;
+        _color = color;
         _isInitialized = true;
 
-        Transform tail = _snakeFactory.CreateTail(PartSpawnPosition);
+        Transform tail = _snakeFactory.CreateTail(PartSpawnPosition, _color);
         Add(tail);
     }
 
     private void Update()
     {
         TransformBody();
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            AddPart();
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RemovePart();
-        }
-    }
-
-    public void AddPart()
-    {
-        if (_isInitialized == false)
-            return;
-
-        Transform bodyPart = _snakeFactory.CreateBody(_positionHistory[_positionHistory.Count - 1]);
-        Add(bodyPart);
     }
 
     public void SetBodyPart(int value)
@@ -73,7 +56,7 @@ public class SnakeBodyParts : MonoBehaviour
         if (partsCount == value)
             return;
 
-        if(_snakeParts.Count < value)
+        if (_snakeParts.Count < value)
         {
             for (int i = 0; i < value - partsCount; i++)
             {
@@ -87,6 +70,16 @@ public class SnakeBodyParts : MonoBehaviour
                 RemovePart();
             }
         }
+    }
+
+    private void AddPart()
+    {
+        if (_isInitialized == false)
+            return;
+
+        Transform bodyPart = _snakeFactory.CreateBody(PartSpawnPosition, _color);
+
+        Add(bodyPart);
     }
 
     private void Add(Transform part)
@@ -105,7 +98,7 @@ public class SnakeBodyParts : MonoBehaviour
         Resize();
     }
 
-    public void RemovePart()
+    private void RemovePart()
     {
         if (_snakeParts.Count < 2)
             return;

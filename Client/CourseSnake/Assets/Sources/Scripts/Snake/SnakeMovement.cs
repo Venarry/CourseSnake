@@ -5,7 +5,6 @@ public class SnakeMovement : MonoBehaviour
 {
     [SerializeField] private float _defaultSpeed = 8;
     [SerializeField] private float _boostSpeedMultiplayer = 2.5f;
-    [SerializeField] private Transform _pointTraker;
 
     private bool _boosted;
 
@@ -18,7 +17,6 @@ public class SnakeMovement : MonoBehaviour
     private void Awake()
     {
         _targetPoint = transform.position;
-        _targetPoint2 = transform.position;
     }
 
     private void Update()
@@ -39,7 +37,6 @@ public class SnakeMovement : MonoBehaviour
     }
 
     private Vector3 _targetPoint;
-    private Vector3 _targetPoint2;
 
     public void SetLerpPosition(Vector3 position)
     {

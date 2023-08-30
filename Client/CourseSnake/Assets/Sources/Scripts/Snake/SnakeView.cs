@@ -2,14 +2,16 @@ using UnityEngine;
 
 public class SnakeView : MonoBehaviour
 {
+    [SerializeField] private MeshRenderer _headMesh;
     private SnakeScorePresenter _snakeScorePresenter;
     private bool _isInitialized;
 
-    public void Init(SnakeScorePresenter snakeScorePresenter)
+    public void Init(SnakeScorePresenter snakeScorePresenter, Color color)
     {
         gameObject.SetActive(false);
 
         _snakeScorePresenter = snakeScorePresenter;
+        _headMesh.material.color = color;
         _isInitialized = true;
 
         gameObject.SetActive(true);

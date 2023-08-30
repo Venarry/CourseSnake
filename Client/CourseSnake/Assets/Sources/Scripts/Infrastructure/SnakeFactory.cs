@@ -20,25 +20,30 @@ public class SnakeFactory
         _cameraMovement = cameraMovement;
     }
 
-    public SnakeView Create(Vector3 position, bool isMultiplayer, Player player = null)
+    public SnakeView Create(Vector3 position, string name, Color color, bool isMultiplayer, Player player = null)
     {
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
-        //CameraMovement mainCamera = Object.Instantiate(_mainCameraPrefab);
         Camera camera = _cameraMovement.GetComponent<Camera>();
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
+        SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
+        snakeNameView.SetName(name);
+        snakeNameView.SetLookAtTarget(_cameraMovement.transform);
 
-        snakeBodyParts.Init(this);
+        snakeBodyParts.Init(this, color);
         snakeView.GetComponent<MouseClickHandler>().Init(camera);
 
         SnakeScoreModel snakeScoreModel = new();
-        SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);
+        SnakeScorePresenter snakeScorePresenter = new(
+            snakeScoreModel, 
+            snakeBodyParts, 
+            snakeMovement);
 
-        snakeView.Init(snakeScorePresenter);
+        snakeView.Init(snakeScorePresenter, color);
 
-        _cameraMovement.SetTarget(snakeView.transform); // камеру передавать
+        _cameraMovement.SetTarget(snakeView.transform);
 
         if (isMultiplayer == true)
         {
@@ -56,14 +61,21 @@ public class SnakeFactory
 
     public SnakeView CreateEnemy(Player player)
     {
+        Color snakeColor = new(player.Color.x, player.Color.y, player.Color.z);
+        string name = player.Name;
+
         Vector3 position = new(player.Position.x, player.Position.y, player.Position.z);
         Quaternion rotation = Quaternion.Euler(player.Rotation.x, player.Rotation.y, player.Rotation.z);
         SnakeView snakeView = Object.Instantiate(_prefabEnemySnake, position, rotation);
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
-        snakeBodyParts.Init(this);
+        snakeBodyParts.Init(this, snakeColor);
+
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
         SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
+        SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
+        snakeNameView.SetName(name);
+        snakeNameView.SetLookAtTarget(_cameraMovement.transform);
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);
         snakeRotation.SetTargetPoint(targetPoint);
@@ -71,21 +83,23 @@ public class SnakeFactory
         SnakeScoreModel snakeScoreModel = new();
         SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);
 
-        snakeView.Init(snakeScorePresenter);
+        snakeView.Init(snakeScorePresenter, snakeColor);
         snakeView.GetComponent<EnemyMultiplayerHandler>().Init(player, snakeRotation, snakeMovement, snakeScorePresenter);
 
         return snakeView;
     }
 
-    public Transform CreateBody(Vector3 position)
+    public Transform CreateBody(Vector3 position, Color color)
     {
         Transform body = Object.Instantiate(_prefabBody, position, Quaternion.identity);
+        body.GetComponentInChildren<MeshRenderer>().material.color = color;
         return body;
     }
 
-    public Transform CreateTail(Vector3 position)
+    public Transform CreateTail(Vector3 position, Color color)
     {
         Transform tail = Object.Instantiate(_prefabTail, position, Quaternion.identity);
+        tail.GetComponentInChildren<MeshRenderer>().material.color = color;
         return tail;
     }
 }

@@ -30,6 +30,12 @@ export class MyVector3 extends Schema
 }
 
 export class Player extends Schema {
+    @type("string")
+    Name = "";
+
+    @type(MyVector3)
+    Color = new MyVector3(0, 0, 0);
+
     @type(MyVector3)
     Position = new MyVector3(0, 0, 0);
 
@@ -70,11 +76,13 @@ export class Player extends Schema {
         this.Score = score;
     }
 
-    constructor (position: MyVector3)
+    constructor (data: any)
     {
         super();
 
-        this.Position.SetValues(position);
+        this.Position.SetValues(data.Position);
+        this.Name = data.Name;
+        this.Color.SetValues(data.Color);
     }
 }
 
@@ -84,8 +92,8 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    CreatePlayer(sessionId: string, position: MyVector3) {
-        this.players.set(sessionId, new Player(position));
+    CreatePlayer(sessionId: string, data: any) {
+        this.players.set(sessionId, new Player(data));
     }
 
     RemovePlayer(sessionId: string) {
@@ -127,9 +135,9 @@ export class StateHandlerRoom extends Room<State> {
         this.setState(new State());
         this.setMetadata(options).then(() => updateLobby(this));
 
-        this.onMessage("PlayerSpawned", (client, position) => 
+        this.onMessage("PlayerSpawned", (client, data) => 
         {
-            this.state.CreatePlayer(client.sessionId, position);
+            this.state.CreatePlayer(client.sessionId, data);
         });
 
         this.onMessage("Position", (client, position) => 

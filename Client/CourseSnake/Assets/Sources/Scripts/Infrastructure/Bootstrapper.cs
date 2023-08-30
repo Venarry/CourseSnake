@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Bootstrapper : MonoBehaviour
 {
+    [SerializeField] private PlayerSpawnInitiator _playerSpawnInitiator;
+
     private async void Awake()
     {
         StateHandlerRoom stateHandlerRoom = StateHandlerRoom.Instance;
@@ -12,7 +14,8 @@ public class Bootstrapper : MonoBehaviour
         SnakeFactory snakeFactory = new();
         snakeFactory.InitCamera(cameraMovement);
 
-        PlayerSpawnInitiator playerSpawner = new(10, 10);
+        //PlayerSpawnInitiator playerSpawner = new(10, 10);
+        _playerSpawnInitiator.SetArea(10, 10);
 
         try
         {
@@ -23,14 +26,14 @@ public class Bootstrapper : MonoBehaviour
 
             MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
             MultiplayerUserHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUserHandler>();
-            multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, playerSpawner, snakeFactory);
+            multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, _playerSpawnInitiator, snakeFactory);
         }
         catch
         {
             Debug.Log("StartSinglpalyer");
-            SinglPlayerUserHandler singlPlayerUserHandler = new(playerSpawner, snakeFactory);
+            SinglPlayerUserHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
         }
-        
-        playerSpawner.InitPlayerSpawnPoint();
+
+        _playerSpawnInitiator.SetMenuState(true);
     }
 }

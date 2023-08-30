@@ -32,7 +32,7 @@ public class MultiplayerUserHandler : MonoBehaviour
         if (_isInitialized == false)
             return;
 
-        _playerSpawner.PlayerPointInited += OnPlayerSpawnPointInit;
+        _playerSpawner.PlayerSpawnInited += OnPlayerInit;
         _mapMultiplayerHandler.PlayerJoined += OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined += OnEnemyJoin;
         _mapMultiplayerHandler.EnemyLeaved += OnEnemyLeave;
@@ -43,7 +43,7 @@ public class MultiplayerUserHandler : MonoBehaviour
         if (_isInitialized == false)
             return;
 
-        _playerSpawner.PlayerPointInited -= OnPlayerSpawnPointInit;
+        _playerSpawner.PlayerSpawnInited -= OnPlayerInit;
         _mapMultiplayerHandler.PlayerJoined -= OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined -= OnEnemyJoin;
         _mapMultiplayerHandler.EnemyLeaved -= OnEnemyLeave;
@@ -52,7 +52,8 @@ public class MultiplayerUserHandler : MonoBehaviour
     private void OnPlayerJoin(string key, Player player)
     {
         Vector3 spawnPosition = new(player.Position.x, player.Position.y, player.Position.z);
-        _snakeFactory.Create(spawnPosition, true, player);
+        Color snakeColor = new(player.Color.x, player.Color.y, player.Color.z);
+        _snakeFactory.Create(spawnPosition, player.Name, snakeColor, true, player);
     }
 
     private void OnEnemyJoin(string key, Player player)
@@ -61,10 +62,19 @@ public class MultiplayerUserHandler : MonoBehaviour
         _enemys.Add(key, enemy);
     }
 
-    private void OnPlayerSpawnPointInit(Vector3 position)
+    private void OnPlayerInit(Vector3 position, string name, Color color)
     {
         MyVector3 myVector3 = new(position);
-        _stateHandlerRoom.SendPlayerData("PlayerSpawned", myVector3);
+        MyVector3 snakeColor = new(color.r, color.g, color.b);
+
+        Dictionary<string, object> data = new()
+        {
+            { "Position", myVector3 },
+            { "Name", name },
+            { "Color", snakeColor },
+        };
+
+        _stateHandlerRoom.SendPlayerData("PlayerSpawned", data);
     }
 
     private void OnEnemyLeave(string key)

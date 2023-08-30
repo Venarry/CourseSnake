@@ -11,16 +11,16 @@ public class SinglPlayerUserHandler
         _playerSpawnInitiator = playerSpawnInitiator;
         _snakeFactory = snakeFactory;
 
-        _playerSpawnInitiator.PlayerPointInited += OnPlayerInited;
+        _playerSpawnInitiator.PlayerSpawnInited += OnPlayerInited;
     }
 
     ~SinglPlayerUserHandler()
     {
-        _playerSpawnInitiator.PlayerPointInited -= OnPlayerInited;
+        _playerSpawnInitiator.PlayerSpawnInited -= OnPlayerInited;
     }
 
-    private void OnPlayerInited(Vector3 position)
+    private void OnPlayerInited(Vector3 position, string name, Color color)
     {
-        _snakeFactory.Create(position, false);
+        _snakeFactory.Create(position, name, color, false);
     }
 }
