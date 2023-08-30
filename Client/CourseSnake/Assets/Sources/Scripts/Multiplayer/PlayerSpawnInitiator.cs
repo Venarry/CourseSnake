@@ -1,14 +1,14 @@
 using System;
 using UnityEngine;
 
-public class PlayerSpawnPointInitiator
+public class PlayerSpawnInitiator
 {
     private readonly float _widthSpawn;
     private readonly float _heightSpawn;
 
     public event Action<Vector3> PlayerPointInited;
 
-    public PlayerSpawnPointInitiator(
+    public PlayerSpawnInitiator(
         float widthSpawn,
         float heightSpawn)
     {

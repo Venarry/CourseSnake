@@ -7,16 +7,14 @@ public class MultiplayerUserHandler : MonoBehaviour
     private readonly Dictionary<string, SnakeView> _enemys = new();
     private MapMultiplayerHandler _mapMultiplayerHandler;
     private StateHandlerRoom _stateHandlerRoom;
-    private PlayerSpawnPointInitiator _playerSpawner;
+    private PlayerSpawnInitiator _playerSpawner;
     private SnakeFactory _snakeFactory;
-    private CameraMovement _mainCamera;
     private bool _isInitialized;
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,
-        PlayerSpawnPointInitiator playerSpawner,
-        SnakeFactory snakeFactory,
-        CameraMovement mainCamera)
+        PlayerSpawnInitiator playerSpawner,
+        SnakeFactory snakeFactory)
     {
         gameObject.SetActive(false);
 
@@ -24,7 +22,6 @@ public class MultiplayerUserHandler : MonoBehaviour
         _stateHandlerRoom = stateHandlerRoom;
         _playerSpawner = playerSpawner;
         _snakeFactory = snakeFactory;
-        _mainCamera = mainCamera;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -55,7 +52,7 @@ public class MultiplayerUserHandler : MonoBehaviour
     private void OnPlayerJoin(string key, Player player)
     {
         Vector3 spawnPosition = new(player.Position.x, player.Position.y, player.Position.z);
-        _snakeFactory.Create(spawnPosition, _mainCamera, true, player);
+        _snakeFactory.Create(spawnPosition, true, player);
     }
 
     private void OnEnemyJoin(string key, Player player)

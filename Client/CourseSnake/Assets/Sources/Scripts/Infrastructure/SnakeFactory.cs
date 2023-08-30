@@ -7,19 +7,25 @@ public class SnakeFactory
     private readonly SnakeView _prefabEnemySnake = Resources.Load<SnakeView>(ResourcesPath.EnemySnake);
     private readonly Transform _prefabBody = Resources.Load<Transform>(ResourcesPath.SnakeBodyPart);
     private readonly Transform _prefabTail = Resources.Load<Transform>(ResourcesPath.SnakeTail);
+    private CameraMovement _cameraMovement;
     private StateHandlerRoom _stateHandlerRoom;
 
-    public void Init(StateHandlerRoom stateHandlerRoom)
+    public void InitStateHandlerRoom(StateHandlerRoom stateHandlerRoom)
     {
         _stateHandlerRoom = stateHandlerRoom;
     }
 
-    public SnakeView Create(Vector3 position, CameraMovement mainCamera, bool isMultiplayer, Player player = null)
+    public void InitCamera(CameraMovement cameraMovement)
+    {
+        _cameraMovement = cameraMovement;
+    }
+
+    public SnakeView Create(Vector3 position, bool isMultiplayer, Player player = null)
     {
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
         //CameraMovement mainCamera = Object.Instantiate(_mainCameraPrefab);
-        Camera camera = mainCamera.GetComponent<Camera>();
+        Camera camera = _cameraMovement.GetComponent<Camera>();
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
@@ -32,7 +38,7 @@ public class SnakeFactory
 
         snakeView.Init(snakeScorePresenter);
 
-        mainCamera.SetTarget(snakeView.transform); // камеру передавать
+        _cameraMovement.SetTarget(snakeView.transform); // камеру передавать
 
         if (isMultiplayer == true)
         {

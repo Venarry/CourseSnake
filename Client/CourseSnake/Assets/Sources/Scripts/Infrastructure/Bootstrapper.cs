@@ -6,22 +6,31 @@ public class Bootstrapper : MonoBehaviour
     {
         StateHandlerRoom stateHandlerRoom = StateHandlerRoom.Instance;
 
-        SnakeFactory snakeFactory = new();
-
         CameraFactory cameraFactory = new();
         CameraMovement cameraMovement = cameraFactory.Create();
 
-        if (await stateHandlerRoom.JoinOrCreate() == false)
-            return;
+        SnakeFactory snakeFactory = new();
+        snakeFactory.InitCamera(cameraMovement);
 
-        snakeFactory.Init(stateHandlerRoom);
+        PlayerSpawnInitiator playerSpawner = new(10, 10);
 
-        PlayerSpawnPointInitiator playerSpawner = new(10, 10);
+        try
+        {
+            if (await stateHandlerRoom.JoinOrCreate() == false)
+                return;
 
-        MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
-        MultiplayerUserHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUserHandler>();
-        multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, playerSpawner, snakeFactory, cameraMovement);
+            snakeFactory.InitStateHandlerRoom(stateHandlerRoom);
 
+            MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
+            MultiplayerUserHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUserHandler>();
+            multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, playerSpawner, snakeFactory);
+        }
+        catch
+        {
+            Debug.Log("StartSinglpalyer");
+            SinglPlayerUserHandler singlPlayerUserHandler = new(playerSpawner, snakeFactory);
+        }
+        
         playerSpawner.InitPlayerSpawnPoint();
     }
 }

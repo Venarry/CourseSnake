@@ -44,7 +44,7 @@ public class SnakeMovement : MonoBehaviour
     public void SetLerpPosition(Vector3 position)
     {
         //Vector3 targetPosition = Vector3.Lerp(_targetPoint, position, (_targetPoint - position).magnitude * 0.2f);
-        Vector3 targetPosition = Vector3.Lerp(transform.position, position, 0.05f);
+        Vector3 targetPosition = Vector3.Lerp(transform.position, position, 0.06f);
         transform.position = targetPosition;
     }
 

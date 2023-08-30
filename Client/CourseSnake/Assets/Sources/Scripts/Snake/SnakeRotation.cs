@@ -38,7 +38,8 @@ public class SnakeRotation : MonoBehaviour
     {
         Quaternion previousRotation = transform.rotation;
 
-        Vector3 rotateDirection = (_targetPoint - transform.position).normalized;
+        //Vector3 rotateDirection = (_targetPoint - transform.position).normalized;
+        Vector3 rotateDirection = _targetPoint.normalized;
         Quaternion targetRotation;
 
         if (rotateDirection != Vector3.zero)

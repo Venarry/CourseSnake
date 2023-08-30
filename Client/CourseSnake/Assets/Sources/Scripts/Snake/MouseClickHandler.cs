@@ -48,7 +48,8 @@ public class MouseClickHandler : MonoBehaviour
         if (_plane.Raycast(ray, out float distance))
         {
             point = ray.GetPoint(distance);
-            _snakeRotation.SetTargetPoint(point);
+            //_snakeRotation.SetTargetPoint(point);
+            _snakeRotation.SetTargetPoint(point - transform.position);
         }
     }
 
