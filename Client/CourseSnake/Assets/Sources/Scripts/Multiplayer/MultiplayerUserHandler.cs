@@ -9,12 +9,14 @@ public class MultiplayerUserHandler : MonoBehaviour
     private StateHandlerRoom _stateHandlerRoom;
     private PlayerSpawnPointInitiator _playerSpawner;
     private SnakeFactory _snakeFactory;
+    private CameraMovement _mainCamera;
     private bool _isInitialized;
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,
         PlayerSpawnPointInitiator playerSpawner,
-        SnakeFactory snakeFactory)
+        SnakeFactory snakeFactory,
+        CameraMovement mainCamera)
     {
         gameObject.SetActive(false);
 
@@ -22,6 +24,7 @@ public class MultiplayerUserHandler : MonoBehaviour
         _stateHandlerRoom = stateHandlerRoom;
         _playerSpawner = playerSpawner;
         _snakeFactory = snakeFactory;
+        _mainCamera = mainCamera;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -52,7 +55,7 @@ public class MultiplayerUserHandler : MonoBehaviour
     private void OnPlayerJoin(string key, Player player)
     {
         Vector3 spawnPosition = new(player.Position.x, player.Position.y, player.Position.z);
-        _snakeFactory.Create(spawnPosition, true, player);
+        _snakeFactory.Create(spawnPosition, _mainCamera, true, player);
     }
 
     private void OnEnemyJoin(string key, Player player)

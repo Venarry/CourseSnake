@@ -36,11 +36,38 @@ public class PlayerMultiplayerHandler : MonoBehaviour
             return;
 
         _thisPlayer.Position.OnChange += OnPositionChange;
+        _thisPlayer.Direction.OnChange += OnDirectionChange;
+
         _snakeMovement.PositionChanged += OnPositionChange;
         _snakeMovement.BoostStateChanged += OnBoostStateChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
         _snakeRotation.TargetPointSet += OnTargetPointSet;
         _snakeScorePresenter.ScoreChanged += OnScoreChanged;
+    }
+
+    private void OnDirectionChange(List<DataChange> changes)
+    {
+        Vector3 point = _snakeRotation.TargetPoint;
+
+        foreach (var change in changes)
+        {
+            switch (change.Field)
+            {
+                case "x":
+                    point.x = (float)change.Value;
+                    break;
+
+                case "y":
+                    point.y = (float)change.Value;
+                    break;
+
+                case "z":
+                    point.z = (float)change.Value;
+                    break;
+            }
+        }
+
+        //_snakeRotation.SetTargetPoint(point);
     }
 
     private void OnPositionChange(List<DataChange> changes)
@@ -49,14 +76,14 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 
         foreach (var change in changes)
         {
-            switch (change.Value)
+            switch (change.Field)
             {
                 case "x":
                     currentPosition.x = (float)change.Value;
                     break;
 
                 case "y":
-                    currentPosition.y = (float)change.Value;
+                    currentPosition.y = 0;
                     break;
 
                 case "z":
@@ -64,7 +91,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
                     break;
             }
         }
-
+        
         _snakeMovement.SetLerpPosition(currentPosition);
     }
 
@@ -74,6 +101,8 @@ public class PlayerMultiplayerHandler : MonoBehaviour
             return;
 
         _thisPlayer.Position.OnChange -= OnPositionChange;
+        _thisPlayer.Direction.OnChange -= OnDirectionChange;
+
         _snakeMovement.PositionChanged -= OnPositionChange;
         _snakeMovement.BoostStateChanged -= OnBoostStateChange;
         _snakeRotation.RotationChanged -= OnRotationChanged;

@@ -5,6 +5,7 @@ public class SnakeMovement : MonoBehaviour
 {
     [SerializeField] private float _defaultSpeed = 8;
     [SerializeField] private float _boostSpeedMultiplayer = 2.5f;
+    [SerializeField] private Transform _pointTraker;
 
     private bool _boosted;
 
@@ -13,6 +14,12 @@ public class SnakeMovement : MonoBehaviour
     public event Action<Vector3> PositionChanged;
 
     public float CurrentSpeed { get; private set; }
+
+    private void Awake()
+    {
+        _targetPoint = transform.position;
+        _targetPoint2 = transform.position;
+    }
 
     private void Update()
     {
@@ -25,14 +32,19 @@ public class SnakeMovement : MonoBehaviour
         }
 
         Vector3 moveForce = CurrentSpeed * Time.deltaTime * transform.forward;
+        _targetPoint += moveForce;
         transform.position += moveForce;
 
-        PositionChanged?.Invoke(transform.position);
+        PositionChanged?.Invoke(_targetPoint);
     }
+
+    private Vector3 _targetPoint;
+    private Vector3 _targetPoint2;
 
     public void SetLerpPosition(Vector3 position)
     {
-        Vector3 targetPosition = Vector3.Lerp(transform.position, position, 0.25f);
+        //Vector3 targetPosition = Vector3.Lerp(_targetPoint, position, (_targetPoint - position).magnitude * 0.2f);
+        Vector3 targetPosition = Vector3.Lerp(transform.position, position, 0.05f);
         transform.position = targetPosition;
     }
 

@@ -7,7 +7,6 @@ public class SnakeFactory
     private readonly SnakeView _prefabEnemySnake = Resources.Load<SnakeView>(ResourcesPath.EnemySnake);
     private readonly Transform _prefabBody = Resources.Load<Transform>(ResourcesPath.SnakeBodyPart);
     private readonly Transform _prefabTail = Resources.Load<Transform>(ResourcesPath.SnakeTail);
-    private readonly CameraMovement _mainCameraPrefab = Resources.Load<CameraMovement>(ResourcesPath.MainCamera);
     private StateHandlerRoom _stateHandlerRoom;
 
     public void Init(StateHandlerRoom stateHandlerRoom)
@@ -15,11 +14,11 @@ public class SnakeFactory
         _stateHandlerRoom = stateHandlerRoom;
     }
 
-    public SnakeView Create(Vector3 position, bool isMultiplayer, Player player = null)
+    public SnakeView Create(Vector3 position, CameraMovement mainCamera, bool isMultiplayer, Player player = null)
     {
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
-        CameraMovement mainCamera = Object.Instantiate(_mainCameraPrefab);
+        //CameraMovement mainCamera = Object.Instantiate(_mainCameraPrefab);
         Camera camera = mainCamera.GetComponent<Camera>();
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
