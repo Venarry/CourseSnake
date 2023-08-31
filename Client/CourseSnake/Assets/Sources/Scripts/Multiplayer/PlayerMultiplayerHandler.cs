@@ -7,6 +7,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 {
     private Player _thisPlayer;
     private StateHandlerRoom _stateHandlerRoom;
+    private SnakeView _snakeView;
     private SnakeMovement _snakeMovement;
     private SnakeRotation _snakeRotation;
     private SnakeScorePresenter _snakeScorePresenter;
@@ -14,6 +15,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 
     public void Init(Player player,
         StateHandlerRoom stateHandlerRoom, 
+        SnakeView snakeView,
         SnakeMovement snakeMovement, 
         SnakeRotation snakeRotation, 
         SnakeScorePresenter snakeScorePresenter)
@@ -22,6 +24,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 
         _thisPlayer = player;
         _stateHandlerRoom = stateHandlerRoom;
+        _snakeView = snakeView;
         _snakeMovement = snakeMovement;
         _snakeRotation = snakeRotation;
         _snakeScorePresenter = snakeScorePresenter; 
@@ -38,11 +41,28 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _thisPlayer.Position.OnChange += OnPositionChange;
         _thisPlayer.Direction.OnChange += OnDirectionChange;
 
+        _snakeView.Destroyed += OnSnakeDestroy;
         _snakeMovement.PositionChanged += OnPositionChange;
         _snakeMovement.BoostStateChanged += OnBoostStateChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
         _snakeRotation.TargetPointSet += OnTargetPointSet;
         _snakeScorePresenter.ScoreChanged += OnScoreChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (_isInitialized == false)
+            return;
+
+        _thisPlayer.Position.OnChange -= OnPositionChange;
+        _thisPlayer.Direction.OnChange -= OnDirectionChange;
+
+        _snakeView.Destroyed -= OnSnakeDestroy;
+        _snakeMovement.PositionChanged -= OnPositionChange;
+        _snakeMovement.BoostStateChanged -= OnBoostStateChange;
+        _snakeRotation.RotationChanged -= OnRotationChanged;
+        _snakeRotation.TargetPointSet -= OnTargetPointSet;
+        _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
     }
 
     private void OnDirectionChange(List<DataChange> changes)
@@ -70,6 +90,11 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         //_snakeRotation.SetTargetPoint(point);
     }
 
+    private void OnSnakeDestroy()
+    {
+        _stateHandlerRoom.SendPlayerData("PlayerDestroyed");
+    }
+
     private void OnPositionChange(List<DataChange> changes)
     {
         Vector3 currentPosition = transform.position;
@@ -91,23 +116,8 @@ public class PlayerMultiplayerHandler : MonoBehaviour
                     break;
             }
         }
-        
+
         _snakeMovement.SetLerpPosition(currentPosition);
-    }
-
-    private void OnDisable()
-    {
-        if (_isInitialized == false)
-            return;
-
-        _thisPlayer.Position.OnChange -= OnPositionChange;
-        _thisPlayer.Direction.OnChange -= OnDirectionChange;
-
-        _snakeMovement.PositionChanged -= OnPositionChange;
-        _snakeMovement.BoostStateChanged -= OnBoostStateChange;
-        _snakeRotation.RotationChanged -= OnRotationChanged;
-        _snakeRotation.TargetPointSet -= OnTargetPointSet;
-        _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
     }
 
     private void OnBoostStateChange(bool state)

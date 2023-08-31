@@ -96,38 +96,75 @@ export class State extends Schema {
         this.players.set(sessionId, new Player(data));
     }
 
-    RemovePlayer(sessionId: string) {
+    RemovePlayer(sessionId: string) 
+    {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player already delete");
+            return;
+        }
+
         this.players.delete(sessionId);
     }
 
     SetPlayerPosition(sessionId: string, position: MyVector3) 
     {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player have not");
+            return;
+        }
+
         this.players.get(sessionId).SetPosition(position);
     }
 
     SetPlayerRotation(sessionId: string, rotation: MyVector3) 
     {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player have not");
+            return;
+        }
+
         this.players.get(sessionId).SetRotation(rotation);
     }
 
     SetPlayerDirection(sessionId: string, direction: MyVector3) 
     {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player have not");
+            return;
+        }
+
         this.players.get(sessionId).SetDirection(direction);
     }
 
     SetBoostState(sessionId: string, state: boolean)
     {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player have not");
+            return;
+        }
+
         this.players.get(sessionId).SetBoostState(state);
     }
 
     SetPlayerScore(sessionId: string, score: number) 
     {
+        if(this.players.has(sessionId) == false)
+        {
+            console.log("player have not");
+            return;
+        }
+
         this.players.get(sessionId).SetScore(score);
     }
 }
 
 export class StateHandlerRoom extends Room<State> {
-    maxClients = 4;
+    maxClients = 30;
 
     onCreate (options) {
         console.log("StateHandlerRoom created!", options);
@@ -138,6 +175,17 @@ export class StateHandlerRoom extends Room<State> {
         this.onMessage("PlayerSpawned", (client, data) => 
         {
             this.state.CreatePlayer(client.sessionId, data);
+        });
+
+        this.onMessage("PlayerDestroyed", (client) => 
+        {
+            this.state.RemovePlayer(client.sessionId);
+        });
+
+        this.onMessage("EnemyDestroyed", (client, id) => 
+        {
+            this.state.RemovePlayer(id);
+            this.broadcast("EnemyDead", id, {except: client});
         });
 
         this.onMessage("Position", (client, position) => 

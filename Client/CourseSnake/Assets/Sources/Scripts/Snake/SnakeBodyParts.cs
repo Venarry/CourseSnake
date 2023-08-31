@@ -5,13 +5,15 @@ using UnityEngine;
 public class SnakeBodyParts : MonoBehaviour
 {
     [SerializeField] private float _distanceForSave = 1;
-    [SerializeField] private List<Transform> _snakeParts;
 
+    private List<SnakeBody> _snakeParts = new();
     private List<Vector3> _positionHistory;
     private List<Quaternion> _rotationHistory;
     private SnakeFactory _snakeFactory;
     private Color _color;
     private bool _isInitialized;
+
+    public event Action Destroyed;
 
     private Vector3 PartSpawnPosition => _positionHistory[_positionHistory.Count - 1];
 
@@ -26,12 +28,6 @@ public class SnakeBodyParts : MonoBehaviour
         {
             transform.rotation
         };
-
-        for (int i = 0; i < _snakeParts.Count; i++)
-        {
-            _positionHistory.Add(_snakeParts[i].position);
-            _rotationHistory.Add(_snakeParts[i].rotation);
-        }
     }
 
     public void Init(SnakeFactory snakeFactory, Color color)
@@ -40,23 +36,39 @@ public class SnakeBodyParts : MonoBehaviour
         _color = color;
         _isInitialized = true;
 
-        Transform tail = _snakeFactory.CreateTail(PartSpawnPosition, _color);
+        SnakeBody tail = _snakeFactory.CreateTail(PartSpawnPosition, _color, this);
         Add(tail);
     }
 
     private void Update()
     {
         TransformBody();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Destroy();
+        }
+    }
+
+    public void Destroy()
+    {
+        foreach (var part in _snakeParts)
+        {
+            part.Destroy();
+        }
+
+        Destroyed?.Invoke();
+        Destroy(gameObject);
     }
 
     public void SetBodyPart(int value)
     {
-        int partsCount = _snakeParts.Count;
+        int partsCount = _snakeParts.Count - 1;
 
         if (partsCount == value)
             return;
 
-        if (_snakeParts.Count < value)
+        if (partsCount < value)
         {
             for (int i = 0; i < value - partsCount; i++)
             {
@@ -77,12 +89,11 @@ public class SnakeBodyParts : MonoBehaviour
         if (_isInitialized == false)
             return;
 
-        Transform bodyPart = _snakeFactory.CreateBody(PartSpawnPosition, _color);
-
+        SnakeBody bodyPart = _snakeFactory.CreateBody(PartSpawnPosition, _color, this);
         Add(bodyPart);
     }
 
-    private void Add(Transform part)
+    private void Add(SnakeBody part)
     {
         int targetSlotIndex;
 
@@ -92,8 +103,8 @@ public class SnakeBodyParts : MonoBehaviour
             targetSlotIndex = _snakeParts.Count - 1;
 
         _snakeParts.Insert(targetSlotIndex, part);
-        _positionHistory.Add(part.position);
-        _rotationHistory.Add(part.rotation);
+        _positionHistory.Add(part.transform.position);
+        _rotationHistory.Add(part.transform.rotation);
 
         Resize();
     }
@@ -103,7 +114,7 @@ public class SnakeBodyParts : MonoBehaviour
         if (_snakeParts.Count < 2)
             return;
 
-        Transform targetSlot = _snakeParts[_snakeParts.Count - 2];
+        SnakeBody targetSlot = _snakeParts[_snakeParts.Count - 2];
         Destroy(targetSlot.gameObject);
         _snakeParts.Remove(targetSlot);
         _positionHistory.RemoveAt(_positionHistory.Count - 1);
@@ -119,7 +130,7 @@ public class SnakeBodyParts : MonoBehaviour
         for (int i = 0; i < _snakeParts.Count; i++)
         {
             float size = Math.Clamp((float)(_snakeParts.Count - i) / _snakeParts.Count, minSize, 1);
-            _snakeParts[i].localScale = new Vector3(size, size, size);
+            _snakeParts[i].transform.localScale = new Vector3(size, size, size);
         }
     }
 
@@ -143,8 +154,9 @@ public class SnakeBodyParts : MonoBehaviour
         for (int i = 0; i < _snakeParts.Count; i++)
         {
             float progress = deltaDistance / _distanceForSave;
-            _snakeParts[i].position = Vector3.Lerp(_positionHistory[i + 1], _positionHistory[i], progress);
-            _snakeParts[i].rotation = Quaternion.Lerp(_rotationHistory[i + 1], _rotationHistory[i], progress);
+
+            _snakeParts[i].transform.position = Vector3.Lerp(_positionHistory[i + 1], _positionHistory[i], progress);
+            _snakeParts[i].transform.rotation = Quaternion.Lerp(_rotationHistory[i + 1], _rotationHistory[i], progress);
         }
     }
 }

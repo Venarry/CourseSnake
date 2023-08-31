@@ -2,7 +2,23 @@ using UnityEngine;
 
 public class Apple : MonoBehaviour
 {
-    [SerializeField] private float _reward;
+    [SerializeField] private float _reward = 1;
+
+    private void Awake()
+    {
+        SetReward(_reward);
+    }
+
+    public void SetReward(float reward)
+    {
+        float minReward = 0.1f;
+
+        if(reward < minReward)
+            reward = minReward;
+
+        _reward = reward;
+        transform.localScale = new Vector3(_reward, _reward, _reward);
+    }
 
     private void OnTriggerEnter(Collider other)
     {

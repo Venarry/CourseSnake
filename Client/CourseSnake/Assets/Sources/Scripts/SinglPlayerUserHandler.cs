@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
 
-public class SinglPlayerUserHandler
+public class SinglPlayerUserHandler : ISnakeSpawnHandler
 {
     private PlayerSpawnInitiator _playerSpawnInitiator;
     private readonly SnakeFactory _snakeFactory;
+
+    public event Action<SnakeView> SnakeSpawned;
 
     public SinglPlayerUserHandler(PlayerSpawnInitiator playerSpawnInitiator, SnakeFactory snakeFactory)
     {
@@ -21,6 +23,8 @@ public class SinglPlayerUserHandler
 
     private void OnPlayerInited(Vector3 position, string name, Color color)
     {
-        _snakeFactory.Create(position, name, color, false);
+        SnakeView snake = _snakeFactory.CreatePlayer(position, name, color, false);
+
+        SnakeSpawned?.Invoke(snake);
     }
 }

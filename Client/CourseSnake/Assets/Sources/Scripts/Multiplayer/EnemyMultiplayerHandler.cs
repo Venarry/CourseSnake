@@ -5,20 +5,32 @@ using UnityEngine;
 
 public class EnemyMultiplayerHandler : MonoBehaviour
 {
+    private string _id;
+    private StateHandlerRoom _stateHandlerRoom;
     private Player _thisPlayer;
     private SnakeRotation _snakeRotation;
     private SnakeMovement _snakeMovement;
     private SnakeScorePresenter _scorePresenter;
+    private SnakeView _snakeView;
     private bool _isInitialized;
 
-    public void Init(Player player, SnakeRotation snakeRotation, SnakeMovement snakeMovement, SnakeScorePresenter scorePresenter)
+    public void Init(string id,
+        StateHandlerRoom stateHandlerRoom,
+        Player player, 
+        SnakeRotation snakeRotation, 
+        SnakeMovement snakeMovement, 
+        SnakeScorePresenter scorePresenter,
+        SnakeView snakeView)
     {
         gameObject.SetActive(false);
 
+        _id = id;
+        _stateHandlerRoom = stateHandlerRoom;
         _thisPlayer = player;
         _snakeRotation = snakeRotation;
         _snakeMovement = snakeMovement;
         _scorePresenter = scorePresenter;
+        _snakeView = snakeView;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -33,8 +45,9 @@ public class EnemyMultiplayerHandler : MonoBehaviour
         _thisPlayer.Position.OnChange += OnPositionChange;
         _thisPlayer.Rotation.OnChange += OnRotationChange;
         _thisPlayer.OnChange += OnDataChange;
-    }
 
+        _snakeView.Destroyed += OnSnakeDestroy;
+    }
 
     private void OnDisable()
     {
@@ -43,8 +56,14 @@ public class EnemyMultiplayerHandler : MonoBehaviour
 
         _thisPlayer.Direction.OnChange -= OnTargetPointChange;
         _thisPlayer.Position.OnChange -= OnPositionChange;
-        _thisPlayer.Rotation.OnChange += OnRotationChange;
+        _thisPlayer.Rotation.OnChange -= OnRotationChange;
         _thisPlayer.OnChange -= OnDataChange;
+
+        _snakeView.Destroyed -= OnSnakeDestroy;
+    }
+    private void OnSnakeDestroy()
+    {
+        _stateHandlerRoom.SendPlayerData("EnemyDestroyed", _id);
     }
 
     private void OnDataChange(List<DataChange> changes)

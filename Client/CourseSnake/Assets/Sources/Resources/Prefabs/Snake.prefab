@@ -40,14 +40,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9014049784346100539}
-  - component: {fileID: 9014049784346100538}
   - component: {fileID: 9014049784346100536}
+  - component: {fileID: 9014049784346100538}
   - component: {fileID: 9014049784346100537}
   - component: {fileID: 9014049784346100534}
-  - component: {fileID: 5740446805816867843}
+  - component: {fileID: 1824491941390396827}
+  - component: {fileID: 7833911231205201094}
   - component: {fileID: 6625053300927032219}
   - component: {fileID: 3878998545926541213}
-  - component: {fileID: 1824491941390396827}
   m_Layer: 0
   m_Name: Snake
   m_TagString: Untagged
@@ -73,18 +73,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9014049784346100538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9014049784346100541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af8d386ffa87c3144af2c207687fad2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &9014049784346100536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,6 +87,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _defaultSpeed: 8
   _boostSpeedMultiplayer: 2.5
+--- !u!114 &9014049784346100538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014049784346100541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8d386ffa87c3144af2c207687fad2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9014049784346100537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +112,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _distanceForSave: 1
-  _snakeParts: []
 --- !u!114 &9014049784346100534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _headMesh: {fileID: 7242489876325912815}
---- !u!114 &5740446805816867843
+--- !u!114 &1824491941390396827
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,7 +134,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 9014049784346100541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00995936d5568cc45b939f0a6a596ff1, type: 3}
+  m_Script: {fileID: 11500000, guid: 51477c6a7fd698a4c9078ee1de5de305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _name: {fileID: 159030743003889864}
+  _lookAtRotator: {fileID: 8861828264232830768}
+--- !u!114 &7833911231205201094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014049784346100541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703a9beebf9aa9548aaf54ece3e75205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!65 &6625053300927032219
@@ -146,10 +159,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9014049784346100541}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.52, y: 1, z: 0.8}
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!54 &3878998545926541213
 Rigidbody:
@@ -167,20 +180,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1824491941390396827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9014049784346100541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51477c6a7fd698a4c9078ee1de5de305, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _name: {fileID: 159030743003889864}
-  _lookAtRotator: {fileID: 8861828264232830768}
 --- !u!1001 &4295492111558002260
 PrefabInstance:
   m_ObjectHideFlags: 0
