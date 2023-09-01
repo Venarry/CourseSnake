@@ -11,6 +11,9 @@ public class SnakeBody : MonoBehaviour
         _appleFactory = appleFactory;
     }
 
+    public bool IsOwner(SnakeBodyParts snakeBodyParts) =>
+        _owner == snakeBodyParts;
+
     public void Destroy()
     {
         float reward = transform.localScale.x;
@@ -19,7 +22,7 @@ public class SnakeBody : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if(other.TryGetComponent(out SnakeBodyParts snake))
         {
@@ -28,5 +31,5 @@ public class SnakeBody : MonoBehaviour
 
             snake.Destroy();
         }
-    }
+    }*/
 }

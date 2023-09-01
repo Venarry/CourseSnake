@@ -98,3 +98,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _offset: {x: 0, y: 10, z: -2}
+  _nontargetPosition: {x: 0, y: 40, z: -14}

@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 9014049784346100537}
   - component: {fileID: 9014049784346100534}
   - component: {fileID: 1824491941390396827}
-  - component: {fileID: 7833911231205201094}
   - component: {fileID: 6625053300927032219}
   - component: {fileID: 3878998545926541213}
   m_Layer: 0
@@ -85,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95380f9625146b34b8d80c238e524d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultSpeed: 8
+  _defaultSpeed: 2
   _boostSpeedMultiplayer: 2.5
 --- !u!114 &9014049784346100538
 MonoBehaviour:
@@ -139,18 +138,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: {fileID: 159030743003889864}
   _lookAtRotator: {fileID: 8861828264232830768}
---- !u!114 &7833911231205201094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9014049784346100541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 703a9beebf9aa9548aaf54ece3e75205, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &6625053300927032219
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -162,8 +149,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.52, y: 1, z: 0.8}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 0.5, y: 0.5, z: 1.2350515}
+  m_Center: {x: 0, y: 0.25, z: 0.21752566}
 --- !u!54 &3878998545926541213
 Rigidbody:
   m_ObjectHideFlags: 0

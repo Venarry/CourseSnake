@@ -6,17 +6,28 @@ public class SnakeView : MonoBehaviour
     [SerializeField] private MeshRenderer _headMesh;
     private SnakeScorePresenter _snakeScorePresenter;
     private SnakeBodyParts _snakeBodyParts;
+    private SnakeNameView _snakeNameView;
     private bool _isInitialized;
 
+    public event Action<string, float> ScoreChanged;
     public event Action Destroyed;
 
-    public void Init(SnakeScorePresenter snakeScorePresenter, SnakeBodyParts snakeBodyParts, Color color)
+    public string Id { get; private set; }
+    public string Login => _snakeNameView.Login;
+
+    public void Init(SnakeScorePresenter snakeScorePresenter, 
+        SnakeBodyParts snakeBodyParts, 
+        SnakeNameView snakeNameView,
+        Color color, 
+        string id)
     {
         gameObject.SetActive(false);
 
         _snakeScorePresenter = snakeScorePresenter;
         _snakeBodyParts = snakeBodyParts;
+        _snakeNameView = snakeNameView;
         _headMesh.material.color = color;
+        Id = id;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -28,6 +39,7 @@ public class SnakeView : MonoBehaviour
             return;
 
         _snakeScorePresenter.Enable();
+        _snakeScorePresenter.ScoreChanged += OnScoreChanged;
         _snakeBodyParts.Destroyed += OnSnakeDestroyed;
     }
 
@@ -37,6 +49,7 @@ public class SnakeView : MonoBehaviour
             return;
 
         _snakeScorePresenter.Disable();
+        _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
         _snakeBodyParts.Destroyed -= OnSnakeDestroyed;
     }
 
@@ -60,11 +73,8 @@ public class SnakeView : MonoBehaviour
         Destroyed?.Invoke();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnScoreChanged(float score)
     {
-        if(other.TryGetComponent(out DeathBarrier _))
-        {
-            Destroy();
-        }
+        ScoreChanged?.Invoke(Id, score);
     }
 }

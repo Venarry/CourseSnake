@@ -7,6 +7,7 @@ public class SinglPlayerUserHandler : ISnakeSpawnHandler
     private readonly SnakeFactory _snakeFactory;
 
     public event Action<SnakeView> SnakeSpawned;
+    public event Action<string> SnakeRemoved;
 
     public SinglPlayerUserHandler(PlayerSpawnInitiator playerSpawnInitiator, SnakeFactory snakeFactory)
     {
@@ -23,7 +24,8 @@ public class SinglPlayerUserHandler : ISnakeSpawnHandler
 
     private void OnPlayerInited(Vector3 position, string name, Color color)
     {
-        SnakeView snake = _snakeFactory.CreatePlayer(position, name, color, false);
+        string id = "0";
+        SnakeView snake = _snakeFactory.CreatePlayer(position, name, color, id, false);
 
         SnakeSpawned?.Invoke(snake);
     }

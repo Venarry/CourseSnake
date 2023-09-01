@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
-using UnityEngine;
 
 public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 {
@@ -30,7 +29,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 
         InitializeClient();
         DontDestroyOnLoad(gameObject);
-        ConnectLobby();
+        ConnectToLobby();
         _rooms = new();
     }
 
@@ -57,7 +56,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
         return (string)metadata["Version"];
     }
 
-    private async void ConnectLobby()
+    private async void ConnectToLobby()
     {
         _activeLobby = await client.JoinOrCreate<LobbyState>(LobbyName);
         _activeLobby.State.OnChange += OnStateDataChange;
@@ -87,7 +86,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 
     private void OnRoomRemoved(string roomID)
     {
-        Debug.Log($"Removed {roomID}");
+        //Debug.Log($"Removed {roomID}");
         RoomRemoved?.Invoke(roomID);
     }
 
@@ -112,7 +111,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
         {
             IndexedDictionary<string, object> metadata = (IndexedDictionary<string, object>)roomInfo["metadata"];
             _rooms.Add((string)roomInfo["roomId"], roomInfo);
-            Debug.Log((string)roomInfo["roomId"]);
+            //Debug.Log((string)roomInfo["roomId"]);
 
             RoomDataUpdated?.Invoke(roomInfo);
         }

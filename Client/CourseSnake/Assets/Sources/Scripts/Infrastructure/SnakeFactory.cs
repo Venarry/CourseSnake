@@ -21,7 +21,7 @@ public class SnakeFactory
         _appleFactory = appleFactory;
     }
 
-    public SnakeView CreatePlayer(Vector3 position, string name, Color color, bool isMultiplayer, Player player = null)
+    public SnakeView CreatePlayer(Vector3 position, string name, Color color, string id, bool isMultiplayer, Player player = null)
     {
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
@@ -34,8 +34,9 @@ public class SnakeFactory
         snakeNameView.SetName(name);
         snakeNameView.SetLookAtTarget(_cameraMovement.transform);
 
-        SnakeBody snakeBody = snakeView.GetComponent<SnakeBody>();
-        snakeBody.Init(snakeBodyParts, _appleFactory);
+        //SnakeBody snakeBody = snakeView.GetComponent<SnakeBody>();
+        //snakeBody.Init(snakeBodyParts, _appleFactory);
+        snakeView.AddComponent<SnakeCollisionHandler>();
 
         snakeBodyParts.Init(this, color);
 
@@ -45,7 +46,7 @@ public class SnakeFactory
             snakeBodyParts, 
             snakeMovement);
 
-        snakeView.Init(snakeScorePresenter, snakeBodyParts, color);
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, color, id);
 
         _cameraMovement.SetTarget(snakeView.transform);
 
@@ -82,7 +83,7 @@ public class SnakeFactory
         snakeNameView.SetName(name);
         snakeNameView.SetLookAtTarget(_cameraMovement.transform);
 
-        SnakeBody snakeBody = snakeView.GetComponent<SnakeBody>();
+        SnakeBody snakeBody = snakeView.AddComponent<SnakeBody>();
         snakeBody.Init(snakeBodyParts, _appleFactory);
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);
@@ -91,7 +92,7 @@ public class SnakeFactory
         SnakeScoreModel snakeScoreModel = new();
         SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);
 
-        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeColor);
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeColor, id);
         snakeView.AddComponent<EnemyMultiplayerHandler>().Init(
             id,
             _stateHandlerRoom,

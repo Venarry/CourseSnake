@@ -4,18 +4,20 @@ public class Bootstrapper : MonoBehaviour
 {
     [SerializeField] private PlayerSpawnInitiator _playerSpawnInitiator;
     [SerializeField] private SnakeDieReaction _snakeDieReaction;
+    [SerializeField] private CameraMovement _camera;
+    [SerializeField] private MapInfo _mapInfo;
 
     private async void Awake()
     {
         StateHandlerRoom stateHandlerRoom = StateHandlerRoom.Instance;
+        LobbyRoomHandler lobbyRoomHandler = LobbyRoomHandler.Instance;
+
+        _mapInfo.Init(lobbyRoomHandler);
 
         AppleFactory appleFactory = new();
 
-        CameraFactory cameraFactory = new();
-        CameraMovement cameraMovement = cameraFactory.Create();
-
         SnakeFactory snakeFactory = new();
-        snakeFactory.Init(cameraMovement, appleFactory);
+        snakeFactory.Init(_camera, appleFactory);
 
         _playerSpawnInitiator.SetArea(10, 10);
 

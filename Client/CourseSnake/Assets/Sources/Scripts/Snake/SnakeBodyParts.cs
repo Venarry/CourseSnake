@@ -43,11 +43,6 @@ public class SnakeBodyParts : MonoBehaviour
     private void Update()
     {
         TransformBody();
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Destroy();
-        }
     }
 
     public void Destroy()

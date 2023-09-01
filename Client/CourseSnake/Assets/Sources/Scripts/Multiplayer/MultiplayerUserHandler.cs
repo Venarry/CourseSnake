@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
 {
-    private readonly Dictionary<string, SnakeView> _enemys = new();
-    private SnakeView _player;
+    private readonly Dictionary<string, SnakeView> _snakes = new();
     private MapMultiplayerHandler _mapMultiplayerHandler;
     private StateHandlerRoom _stateHandlerRoom;
     private PlayerSpawnInitiator _playerSpawner;
@@ -13,6 +12,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     private bool _isInitialized;
 
     public event Action<SnakeView> SnakeSpawned;
+    public event Action<string> SnakeRemoved;
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,
@@ -57,8 +57,8 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     {
         Vector3 spawnPosition = new(player.Position.x, player.Position.y, player.Position.z);
         Color snakeColor = new(player.Color.x, player.Color.y, player.Color.z);
-        SnakeView snake = _snakeFactory.CreatePlayer(spawnPosition, player.Name, snakeColor, true, player);
-        _enemys.Add(key, snake);
+        SnakeView snake = _snakeFactory.CreatePlayer(spawnPosition, player.Name, snakeColor, key, true, player);
+        _snakes.Add(key, snake);
 
         SnakeSpawned?.Invoke(snake);
     }
@@ -66,7 +66,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     private void OnEnemyJoin(string key, Player player)
     {
         SnakeView enemy = _snakeFactory.CreateEnemy(player, key);
-        _enemys.Add(key, enemy);
+        _snakes.Add(key, enemy);
     }
 
     private void OnPlayerInit(Vector3 position, string name, Color color)
@@ -86,12 +86,13 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
 
     private void OnEnemyLeave(string key)
     {
-        if (_enemys.ContainsKey(key) == false)
+        if (_snakes.ContainsKey(key) == false)
             return;
 
-        if(_enemys[key] != null)
-            _enemys[key].Destroy();
+        if(_snakes[key] != null)
+            _snakes[key].Destroy();
 
-        _enemys.Remove(key);
+        _snakes.Remove(key);
+        SnakeRemoved?.Invoke(key);
     }
 }
