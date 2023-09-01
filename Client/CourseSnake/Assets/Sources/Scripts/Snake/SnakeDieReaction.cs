@@ -7,32 +7,32 @@ public class SnakeDieReaction : MonoBehaviour
 
     private ISnakeSpawnHandler _spawnHandler;
     private SnakeView _currentSnake;
-    private bool _isInitialised;
+    private bool _isInitialized;
 
     public void Init(ISnakeSpawnHandler snakeSpawnHandler)
     {
         gameObject.SetActive(false);
 
         _spawnHandler = snakeSpawnHandler;
-        _isInitialised = true;
+        _isInitialized = true;
 
         gameObject.SetActive(true);
     }
 
     private void OnEnable()
     {
-        if (_isInitialised == false)
+        if (_isInitialized == false)
             return;
 
-        _spawnHandler.SnakeSpawned += OnSnakeSpawn;
+        _spawnHandler.PlayerSpawned += OnSnakeSpawn;
     }
 
     private void OnDisable()
     {
-        if (_isInitialised == false)
+        if (_isInitialized == false)
             return;
 
-        _spawnHandler.SnakeSpawned -= OnSnakeSpawn;
+        _spawnHandler.PlayerSpawned -= OnSnakeSpawn;
     }
 
     private void OnSnakeSpawn(SnakeView snake)

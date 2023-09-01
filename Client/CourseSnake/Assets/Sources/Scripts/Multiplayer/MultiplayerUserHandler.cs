@@ -11,6 +11,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     private SnakeFactory _snakeFactory;
     private bool _isInitialized;
 
+    public event Action<SnakeView> PlayerSpawned;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<string> SnakeRemoved;
 
@@ -60,6 +61,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
         SnakeView snake = _snakeFactory.CreatePlayer(spawnPosition, player.Name, snakeColor, key, true, player);
         _snakes.Add(key, snake);
 
+        PlayerSpawned?.Invoke(snake);
         SnakeSpawned?.Invoke(snake);
     }
 
@@ -67,6 +69,8 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     {
         SnakeView enemy = _snakeFactory.CreateEnemy(player, key);
         _snakes.Add(key, enemy);
+
+        SnakeSpawned?.Invoke(enemy);
     }
 
     private void OnPlayerInit(Vector3 position, string name, Color color)

@@ -120,7 +120,7 @@ public class SnakeBodyParts : MonoBehaviour
 
     private void Resize()
     {
-        float minSize = 0.6f;
+        float minSize = 0.7f;
 
         for (int i = 0; i < _snakeParts.Count; i++)
         {

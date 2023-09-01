@@ -17,17 +17,22 @@ public class SnakeCollisionHandler : MonoBehaviour
         {
             if(body.IsOwner(_snakeBodyParts) == false)
             {
-                float myAngle = Vector3.Angle(body.transform.position - transform.position, transform.forward);
-                float bodyAngle = Vector3.Angle(transform.position - body.transform.position, body.transform.forward);
-
-                if (myAngle < bodyAngle)
-                    _snakeBodyParts.Destroy();
+                _snakeBodyParts.Destroy();
             }
+        }
+
+        if (other.TryGetComponent(out SnakeView enemy))
+        {
+            float myAngle = Vector3.Angle(enemy.transform.position - transform.position, transform.forward);
+            float enemyAngle = Vector3.Angle(transform.position - enemy.transform.position, enemy.transform.forward);
+
+            if (myAngle < enemyAngle)
+                _snakeBodyParts.Destroy();
         }
 
         if (other.TryGetComponent(out DeathBarrier _))
         {
-            _snakeView.Destroy();
+            _snakeBodyParts.Destroy();
         }
     }
 }

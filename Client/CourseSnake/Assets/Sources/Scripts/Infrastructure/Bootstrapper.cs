@@ -6,6 +6,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] private SnakeDieReaction _snakeDieReaction;
     [SerializeField] private CameraMovement _camera;
     [SerializeField] private MapInfo _mapInfo;
+    [SerializeField] private LeaderBoardView _leaderBoardView;
 
     private async void Awake()
     {
@@ -15,15 +16,18 @@ public class Bootstrapper : MonoBehaviour
         _mapInfo.Init(lobbyRoomHandler);
 
         AppleFactory appleFactory = new();
+        LeaderBoardPlayerDataFactory leaderBoardPlayerDataFactory = new();
 
         SnakeFactory snakeFactory = new();
         snakeFactory.Init(_camera, appleFactory);
 
         _playerSpawnInitiator.SetArea(10, 10);
 
+        ISnakeSpawnHandler snakeSpawnHandler;
+
         try
         {
-            if (await stateHandlerRoom.JoinOrCreate() == false)
+            if (await stateHandlerRoom.JoinOrCreateAny() == false)
                 return;
 
             snakeFactory.InitStateHandlerRoom(stateHandlerRoom);
@@ -32,15 +36,20 @@ public class Bootstrapper : MonoBehaviour
             MultiplayerUserHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUserHandler>();
             multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, _playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(multiplayerUserHandler);
+
+            snakeSpawnHandler = multiplayerUserHandler;
             Debug.Log("Start Multiplayer");
         }
         catch
         {
-            Debug.Log("Start Singlplayer");
             SinglPlayerUserHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(singlPlayerUserHandler);
+
+            snakeSpawnHandler = singlPlayerUserHandler;
+            Debug.Log("Start Singlplayer");
         }
 
+        _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
     }
 }

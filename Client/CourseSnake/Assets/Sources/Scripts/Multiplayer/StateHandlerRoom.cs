@@ -25,10 +25,39 @@ public class StateHandlerRoom : ColyseusManager<StateHandlerRoom>
         _room.Send(key, data);
     }
 
-    public async Task<bool> JoinOrCreate()
+    public async Task<bool> JoinOrCreateAny(string mapName = "", string password = "")
     {
-        _room = await client.JoinOrCreate<State>(GameName);
+        Dictionary<string, object> roomMetaData = new()
+        {
+            { "RoomName", mapName },
+            { "Password", password },
+            { "Version", GameConfig.Version },
+
+        };
+
+        _room = await client.JoinOrCreate<State>(GameName, roomMetaData);
         return _room != null;
+    }
+
+    public async Task<bool> JoinOrCreateByVersion(string mapName = "", string password = "")
+    {
+        var rooms = _lobbyRoomHandler.Rooms;
+
+        foreach (var room in rooms)
+        {
+            string roomVersion = (string)room.Value["Version"];
+
+            if (GameConfig.Version != roomVersion)
+            {
+                continue;
+            }
+
+            _room = await client.JoinById<State>((string)room.Value["roomId"]);
+            return true;
+        }
+
+        await CreateRoom(mapName, password);
+        return true;
     }
 
     public async Task<bool> JoinRoomById(string id)
@@ -58,12 +87,12 @@ public class StateHandlerRoom : ColyseusManager<StateHandlerRoom>
         return false;
     }
 
-    public async Task<bool> CreateRoom()
+    public async Task<bool> CreateRoom(string mapName = "", string password = "")
     {
         Dictionary<string, object> roomMetaData = new()
         {
-            { "RoomName", "MyRoom" },
-            { "Password", "" },
+            { "RoomName", mapName },
+            { "Password", password },
             { "Version", GameConfig.Version },
         };
 

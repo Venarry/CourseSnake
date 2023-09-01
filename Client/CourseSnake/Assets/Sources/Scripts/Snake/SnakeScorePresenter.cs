@@ -40,8 +40,7 @@ public class SnakeScorePresenter
 
     private void OnBoostUsed(float speed)
     {
-        float scoreReduceMultiplier = 0.1f;
-
+        float scoreReduceMultiplier = 0.05f;
         _snakeScoreModel.RemoveScore(speed * scoreReduceMultiplier);
     }
 

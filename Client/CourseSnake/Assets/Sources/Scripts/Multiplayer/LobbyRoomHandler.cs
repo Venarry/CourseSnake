@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine;
 
 public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 {
@@ -17,8 +18,10 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 
     public event Action<IndexedDictionary<string, object>> RoomDataUpdated;
     public event Action<string> RoomRemoved;
+    public event Action RoomsLoaded;
 
-    public Dictionary<string, IndexedDictionary<string, object>> Rooms => _rooms.ToDictionary(room => room.Key, room => room.Value);
+    public Dictionary<string, IndexedDictionary<string, object>> Rooms =>
+        _rooms.ToDictionary(room => room.Key, room => room.Value);
 
     protected override void Awake()
     {
@@ -112,6 +115,11 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
             IndexedDictionary<string, object> metadata = (IndexedDictionary<string, object>)roomInfo["metadata"];
             _rooms.Add((string)roomInfo["roomId"], roomInfo);
             //Debug.Log((string)roomInfo["roomId"]);
+
+            foreach (var item in roomInfo)
+            {
+                //Debug.Log(item);
+            }
 
             RoomDataUpdated?.Invoke(roomInfo);
         }

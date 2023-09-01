@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LeaderBoardView : MonoBehaviour
@@ -9,6 +10,7 @@ public class LeaderBoardView : MonoBehaviour
     private ISnakeSpawnHandler _spawnHandler;
     private LeaderBoardPlayerDataFactory _playerDataFactory;
     private readonly Dictionary<string, LeaderBoardPlayer> _players = new();
+    private List<LeaderBoardPlayer> _leaders = new();
     private bool _isInitialized;
 
     public void Init(ISnakeSpawnHandler snakeSpawnHandler, LeaderBoardPlayerDataFactory playerDataFactory)
@@ -35,20 +37,37 @@ public class LeaderBoardView : MonoBehaviour
     {
         LeaderBoardPlayer leaderBoardPlayer = _playerDataFactory.Create(_parent, snake.Login);
         _players.Add(snake.Id, leaderBoardPlayer);
+        _leaders.Add(leaderBoardPlayer);
 
         snake.ScoreChanged += OnScoreChange;
-        snake.Destroyed += () => snake.ScoreChanged -= OnScoreChange;
+        //snake.Destroyed += () => snake.ScoreChanged -= OnScoreChange;
+        RefreshLeaderBoard();
     }
 
     private void OnSnakeRemoved(string key)
     {
-        Destroy(_players[key].gameObject);
+        LeaderBoardPlayer currentPlayer = _players[key];
+
         _players.Remove(key);
+        _leaders.Remove(currentPlayer);
+        Destroy(currentPlayer.gameObject);
+        RefreshLeaderBoard();
     }
 
     private void OnScoreChange(string key, float value)
     {
         _players[key].UpdateScore(value);
+        RefreshLeaderBoard();
     }
 
+    private void RefreshLeaderBoard()
+    {
+        _leaders = _leaders.OrderByDescending(currentLeader => currentLeader.Score).ToList();
+
+        for (int i = 0; i < _leaders.Count; i++)
+        {
+            _leaders[i].UpdateLeaderPosition(i + 1);
+            _leaders[i].transform.SetSiblingIndex(i);
+        }
+    }
 }

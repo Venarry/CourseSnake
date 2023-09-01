@@ -46,7 +46,7 @@ public class SnakeFactory
             snakeBodyParts, 
             snakeMovement);
 
-        snakeView.Init(snakeScorePresenter, snakeBodyParts, color, id);
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
 
         _cameraMovement.SetTarget(snakeView.transform);
 
@@ -92,7 +92,7 @@ public class SnakeFactory
         SnakeScoreModel snakeScoreModel = new();
         SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);
 
-        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeColor, id);
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, snakeColor, id);
         snakeView.AddComponent<EnemyMultiplayerHandler>().Init(
             id,
             _stateHandlerRoom,
