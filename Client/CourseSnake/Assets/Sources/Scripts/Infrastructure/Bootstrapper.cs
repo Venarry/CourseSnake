@@ -7,6 +7,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] private CameraMovement _camera;
     [SerializeField] private MapInfo _mapInfo;
     [SerializeField] private LeaderBoardView _leaderBoardView;
+    [SerializeField] private AppleSpawnInitiator _appleSpawnInitiator;
 
     private async void Awake()
     {
@@ -19,7 +20,7 @@ public class Bootstrapper : MonoBehaviour
         LeaderBoardPlayerDataFactory leaderBoardPlayerDataFactory = new();
 
         SnakeFactory snakeFactory = new();
-        snakeFactory.Init(_camera, appleFactory);
+        snakeFactory.Init(_camera, _appleSpawnInitiator);
 
         _playerSpawnInitiator.SetArea(10, 10);
 
@@ -37,6 +38,11 @@ public class Bootstrapper : MonoBehaviour
             multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, _playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(multiplayerUserHandler);
 
+            MultiplayerAppleSpawnHandler appleSpawnHandler = new(
+                stateHandlerRoom, 
+                _appleSpawnInitiator, 
+                appleFactory);
+
             snakeSpawnHandler = multiplayerUserHandler;
             Debug.Log("Start Multiplayer");
         }
@@ -49,6 +55,7 @@ public class Bootstrapper : MonoBehaviour
             Debug.Log("Start Singlplayer");
         }
 
+        _appleSpawnInitiator.InitRandomApples(20);
         _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
     }

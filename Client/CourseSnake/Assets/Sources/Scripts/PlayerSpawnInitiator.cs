@@ -50,6 +50,10 @@ public class PlayerSpawnInitiator : MonoBehaviour
         Vector3 spawnPosition = new(targetWidthPosition, 0, targetHeightPosition);
 
         string name = _name.text;
+
+        if (name == "")
+            name = "player";
+
         SetMenuState(false);
 
         PlayerSpawnInited?.Invoke(spawnPosition, name, _snakeColor);

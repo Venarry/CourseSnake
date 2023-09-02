@@ -9,11 +9,6 @@ public class AppleSpawnInitiator : MonoBehaviour
 
     public event Action<Vector3, float> Inited;
 
-    public void SetSpawnRange(Vector2 spawnRange)
-    {
-        _spawnRange = spawnRange;
-    }
-
     private void Update()
     {
         _currentTime += Time.deltaTime;
@@ -22,15 +17,33 @@ public class AppleSpawnInitiator : MonoBehaviour
         {
             _currentTime = 0;
 
-            Vector3 spawnPosition = CreatePointBySquad();
-            float reward = UnityEngine.Random.Range(0.3f, 1f);
-            Inited?.Invoke(spawnPosition, reward);
+            InitRandomApple();
         }
+    }
+
+    public void InitRandomApples(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            InitRandomApple();
+        }
+    }
+
+    public void SetSpawnRange(Vector2 spawnRange)
+    {
+        _spawnRange = spawnRange;
     }
 
     public void InitSpawn(Vector3 position, float reward)
     {
         Inited?.Invoke(position, reward);
+    }
+
+    private void InitRandomApple()
+    {
+        Vector3 spawnPosition = CreatePointBySquad();
+        float reward = UnityEngine.Random.Range(0.3f, 1f);
+        Inited?.Invoke(spawnPosition, reward);
     }
 
     private Vector3 CreatePointByRound()

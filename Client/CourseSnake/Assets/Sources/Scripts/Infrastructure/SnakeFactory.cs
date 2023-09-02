@@ -7,7 +7,7 @@ public class SnakeFactory
     private readonly SnakeBody _prefabBody = Resources.Load<SnakeBody>(ResourcesPath.SnakeBodyPart);
     private readonly SnakeBody _prefabTail = Resources.Load<SnakeBody>(ResourcesPath.SnakeTail);
     private CameraMovement _cameraMovement;
-    private AppleFactory _appleFactory;
+    private AppleSpawnInitiator _appleSpawnInitiator;
     private StateHandlerRoom _stateHandlerRoom;
 
     public void InitStateHandlerRoom(StateHandlerRoom stateHandlerRoom)
@@ -15,10 +15,11 @@ public class SnakeFactory
         _stateHandlerRoom = stateHandlerRoom;
     }
 
-    public void Init(CameraMovement cameraMovement, AppleFactory appleFactory)
+    public void Init(CameraMovement cameraMovement, 
+        AppleSpawnInitiator appleSpawnInitiator)
     {
         _cameraMovement = cameraMovement;
-        _appleFactory = appleFactory;
+        _appleSpawnInitiator = appleSpawnInitiator;
     }
 
     public SnakeView CreatePlayer(Vector3 position, string name, Color color, string id, bool isMultiplayer, Player player = null)
@@ -83,8 +84,8 @@ public class SnakeFactory
         snakeNameView.SetName(name);
         snakeNameView.SetLookAtTarget(_cameraMovement.transform);
 
-        SnakeBody snakeBody = snakeView.AddComponent<SnakeBody>();
-        snakeBody.Init(snakeBodyParts, _appleFactory);
+        //SnakeBody snakeBody = snakeView.AddComponent<SnakeBody>();
+        //snakeBody.Init(snakeBodyParts, _appleSpawnInitiator);
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);
         snakeRotation.SetTargetPoint(targetPoint);
@@ -114,7 +115,7 @@ public class SnakeFactory
     private SnakeBody CreateSnakePart(SnakeBody prefab, Vector3 position, Color color, SnakeBodyParts owner)
     {
         SnakeBody part = Object.Instantiate(prefab, position, Quaternion.identity);
-        part.Init(owner, _appleFactory);
+        part.Init(owner, _appleSpawnInitiator);
         part.GetComponentInChildren<MeshRenderer>().material.color = color;
 
         return part;

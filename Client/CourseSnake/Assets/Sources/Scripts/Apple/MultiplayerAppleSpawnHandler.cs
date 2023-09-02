@@ -1,13 +1,13 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MultiplayerAppleSpawnHandler
 {
-    private StateHandlerRoom _stateHandlerRoom;
-    private AppleFactory _appleFactory;
+    private readonly StateHandlerRoom _stateHandlerRoom;
+    private readonly AppleFactory _appleFactory;
 
-    private readonly List<Apple> _apples = new();
+    private readonly Dictionary<string, Apple> _apples = new();
 
     public MultiplayerAppleSpawnHandler(StateHandlerRoom stateHandlerRoom,
         AppleSpawnInitiator appleSpawnInitiator,
@@ -21,21 +21,42 @@ public class MultiplayerAppleSpawnHandler
         appleSpawnInitiator.Inited += OnAppleInited;
     }
 
-    private void OnAppleRemove(int key, ServerApple value)
+    private void OnAppleRemove(string key, ServerApple value)
     {
         if(_apples[key] != null)
         {
-            Object.Destroy(_apples[key].gameObject);
+            UnityEngine.Object.Destroy(_apples[key].gameObject);
         }
 
-        _apples.RemoveAt(key);
+        _apples.Remove(value.Id.ToString());
     }
 
-    private void OnAppleAdd(int key, ServerApple value)
+    private void OnAppleAdd(string key, ServerApple value)
     {
         Vector3 spawnPosition = new(value.Position.x, value.Position.y, value.Position.z);
-        Apple apple = _appleFactory.Create(value.Reward, spawnPosition);
-        _apples.Add(apple);
+        Apple apple = _appleFactory.Create(spawnPosition, value.Reward);
+        _apples.Add(key, apple);
+
+        apple.Destroyed += OnAppleDestroy;
+    }
+
+    private void OnAppleDestroy(Apple apple)
+    {
+        string key = "";
+
+        foreach (KeyValuePair<string, Apple> currentApple in _apples)
+        {
+            if(currentApple.Value == apple)
+            {
+                key = currentApple.Key;
+            }
+        }
+
+        if (key == "")
+            return;
+
+        apple.Destroyed -= OnAppleDestroy;
+        _stateHandlerRoom.SendPlayerData("RemoveApple", key);
     }
 
     private void OnAppleInited(Vector3 spawnPosition, float reward)
@@ -48,6 +69,6 @@ public class MultiplayerAppleSpawnHandler
             { "Reward", reward },
         };
 
-        _stateHandlerRoom.SendMessage("CreateApple", data);
+        _stateHandlerRoom.SendPlayerData("CreateApple", data);
     }
 }

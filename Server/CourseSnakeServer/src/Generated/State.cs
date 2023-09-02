@@ -11,7 +11,7 @@ public partial class State : Schema {
 	[Type(0, "map", typeof(MapSchema<Player>))]
 	public MapSchema<Player> players = new MapSchema<Player>();
 
-	[Type(1, "array", typeof(ArraySchema<ServerApple>))]
-	public ArraySchema<ServerApple> Apples = new ArraySchema<ServerApple>();
+	[Type(1, "map", typeof(MapSchema<ServerApple>))]
+	public MapSchema<ServerApple> Apples = new MapSchema<ServerApple>();
 }
 

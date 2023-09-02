@@ -84,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95380f9625146b34b8d80c238e524d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultSpeed: 2
+  _defaultSpeed: 8
   _boostSpeedMultiplayer: 2.5
 --- !u!114 &9014049784346100538
 MonoBehaviour:

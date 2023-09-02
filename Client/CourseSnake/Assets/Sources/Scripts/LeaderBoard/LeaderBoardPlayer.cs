@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System;
 
 public class LeaderBoardPlayer : MonoBehaviour
 {
@@ -18,7 +19,8 @@ public class LeaderBoardPlayer : MonoBehaviour
 
     public void UpdateScore(float value)
     {
-        _score.text = value.ToString();
+        string targetScore = Math.Round(value, 1).ToString();
+        _score.text = targetScore;
         Score = value;
     }
 

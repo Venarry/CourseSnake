@@ -31,13 +31,16 @@ export class MyVector3 extends Schema
 
 export class ServerApple extends Schema
 {
+    @type("int32")
+    Id = 0;
+
     @type(MyVector3)
     Position = new MyVector3(0, 0, 0);
 
     @type("number")
     Reward = 0;
 
-    constructor (position: MyVector3, reward: number)
+    constructor (id: number, position: MyVector3, reward: number)
     {
         super();
 
@@ -107,8 +110,10 @@ export class State extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 
-    @type([ ServerApple ])
-    Apples = new ArraySchema<ServerApple>();
+    @type({ map: ServerApple })
+    Apples = new MapSchema<ServerApple>();
+
+    AppleId = 0;
 
     CreatePlayer(sessionId: string, data: any) 
     {
@@ -128,8 +133,22 @@ export class State extends Schema {
 
     CreateApple(position: MyVector3, reward: number)
     {
-        let apple = new ServerApple(position, reward);
-        this.Apples.push(apple);
+        let id = this.AppleId++;
+        let apple = new ServerApple(id, position, reward);
+        this.Apples.set(id.toString(), apple);
+
+        if(this.AppleId >= 20000000)
+        {
+            this.AppleId = 0;
+        }
+    }
+
+    RemoveApple(key: number)
+    {
+        if(this.Apples.has(key.toString()))
+        {
+            this.Apples.delete(key.toString());
+        }
     }
 
     SetPlayerPosition(sessionId: string, position: MyVector3) 
@@ -190,6 +209,7 @@ export class State extends Schema {
 
 export class StateHandlerRoom extends Room<State> {
     maxClients = 30;
+    OwnerId = "";
 
     onCreate (options) {
         console.log("StateHandlerRoom created!", options);
@@ -209,7 +229,15 @@ export class StateHandlerRoom extends Room<State> {
 
         this.onMessage("CreateApple", (client, data) => 
         {
-            this.state.CreateApple(data.Position, data.Reward);
+            if(client.sessionId == this.OwnerId)
+                this.state.CreateApple(data.Position, data.Reward);
+            else
+                console.log("dont host");
+        });
+
+        this.onMessage("RemoveApple", (client, key) => 
+        {
+            this.state.RemoveApple(key);
         });
 
         this.onMessage("EnemyDestroyed", (client, id) => 
@@ -250,11 +278,23 @@ export class StateHandlerRoom extends Room<State> {
 
     onJoin (client: Client) 
     {
-        //this.state.CreatePlayer(client.sessionId);
+        if(this.OwnerId == "")
+        {
+            this.OwnerId = client.sessionId;
+        }
     }
 
-    onLeave (client) {
+    onLeave (client) 
+    {
         this.state.RemovePlayer(client.sessionId);
+
+        if(this.clients.length == 0)
+            return;
+
+        if(this.OwnerId == client.sessionId)
+        {
+            this.OwnerId = this.clients[0].sessionId;
+        }
     }
 
     onDispose () {
