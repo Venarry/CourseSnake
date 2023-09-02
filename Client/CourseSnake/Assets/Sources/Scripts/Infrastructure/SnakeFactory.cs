@@ -27,10 +27,12 @@ public class SnakeFactory
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
         Camera camera = _cameraMovement.GetComponent<Camera>();
-        snakeView.AddComponent<MouseClickHandler>().Init(camera);
+        MouseClickHandler mouseClickHandler = snakeView.AddComponent<MouseClickHandler>();
+        mouseClickHandler.Init(camera);
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
+        SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
         SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
         snakeNameView.SetName(name);
         snakeNameView.SetLookAtTarget(_cameraMovement.transform);
@@ -51,16 +53,21 @@ public class SnakeFactory
 
         _cameraMovement.SetTarget(snakeView.transform);
 
+
         if (isMultiplayer == true)
         {
-            SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
             snakeView.AddComponent<PlayerMultiplayerHandler>().Init(
                 player, 
                 _stateHandlerRoom, 
                 snakeView,
                 snakeMovement, 
                 snakeRotation, 
-                snakeScorePresenter);
+                snakeScorePresenter,
+                mouseClickHandler);
+        }
+        else
+        {
+            snakeView.AddComponent<SinglPlayerHandler>().Init(mouseClickHandler, snakeRotation);
         }
 
         return snakeView;
@@ -86,9 +93,10 @@ public class SnakeFactory
 
         //SnakeBody snakeBody = snakeView.AddComponent<SnakeBody>();
         //snakeBody.Init(snakeBodyParts, _appleSpawnInitiator);
+        snakeView.AddComponent<SnakeCollisionHandler>();
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);
-        snakeRotation.SetTargetPoint(targetPoint);
+        snakeRotation.SetRotateDirection(targetPoint);
 
         SnakeScoreModel snakeScoreModel = new();
         SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);

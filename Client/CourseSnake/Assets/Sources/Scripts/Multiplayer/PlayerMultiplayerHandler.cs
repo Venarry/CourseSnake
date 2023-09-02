@@ -11,6 +11,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
     private SnakeMovement _snakeMovement;
     private SnakeRotation _snakeRotation;
     private SnakeScorePresenter _snakeScorePresenter;
+    private MouseClickHandler _mouseClickHandler;
     private bool _isInitialized;
 
     public void Init(Player player,
@@ -18,7 +19,8 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         SnakeView snakeView,
         SnakeMovement snakeMovement, 
         SnakeRotation snakeRotation, 
-        SnakeScorePresenter snakeScorePresenter)
+        SnakeScorePresenter snakeScorePresenter,
+        MouseClickHandler mouseClickHandler)
     {
         gameObject.SetActive(false);
 
@@ -28,6 +30,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _snakeMovement = snakeMovement;
         _snakeRotation = snakeRotation;
         _snakeScorePresenter = snakeScorePresenter; 
+        _mouseClickHandler = mouseClickHandler;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -42,10 +45,11 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _thisPlayer.Direction.OnChange += OnDirectionChange;
 
         _snakeView.Destroyed += OnSnakeDestroy;
+        _mouseClickHandler.DirectionSet += OnDirectionSet;
         _snakeMovement.PositionChanged += OnPositionChange;
         _snakeMovement.BoostStateChanged += OnBoostStateChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
-        _snakeRotation.TargetPointSet += OnTargetPointSet;
+        //_snakeRotation.TargetPointSet += OnDirectionSet;
         _snakeScorePresenter.ScoreChanged += OnScoreChanged;
     }
 
@@ -58,10 +62,11 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _thisPlayer.Direction.OnChange -= OnDirectionChange;
 
         _snakeView.Destroyed -= OnSnakeDestroy;
+        _mouseClickHandler.DirectionSet -= OnDirectionSet;
         _snakeMovement.PositionChanged -= OnPositionChange;
         _snakeMovement.BoostStateChanged -= OnBoostStateChange;
         _snakeRotation.RotationChanged -= OnRotationChanged;
-        _snakeRotation.TargetPointSet -= OnTargetPointSet;
+        //_snakeRotation.TargetPointSet -= OnDirectionSet;
         _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
     }
 
@@ -87,7 +92,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
             }
         }
 
-        //_snakeRotation.SetTargetPoint(point);
+        _snakeRotation.SetRotateDirection(point);
     }
 
     private void OnSnakeDestroy()
@@ -125,7 +130,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _stateHandlerRoom.SendPlayerData("BoostState", state);
     }
 
-    private void OnTargetPointSet(Vector3 point)
+    private void OnDirectionSet(Vector3 point)
     {
         MyVector3 myVector3 = new(point);
         _stateHandlerRoom.SendPlayerData("Direction", myVector3);

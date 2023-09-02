@@ -63,7 +63,7 @@ public class EnemyMultiplayerHandler : MonoBehaviour
     }
     private void OnSnakeDestroy()
     {
-        //_stateHandlerRoom.SendPlayerData("EnemyDestroyed", _id);
+        _stateHandlerRoom.SendPlayerData("EnemyDestroyed", _id);
     }
 
     private void OnDataChange(List<DataChange> changes)
@@ -87,7 +87,7 @@ public class EnemyMultiplayerHandler : MonoBehaviour
     {
         Vector3 rotation = transform.rotation.eulerAngles;
         rotation = ApplyVectorChange(changes, rotation);
-        _snakeRotation.SetRotation(rotation);
+        //_snakeRotation.SetRotation(rotation);
     }
 
     private void OnPositionChange(List<DataChange> changes)
@@ -101,7 +101,7 @@ public class EnemyMultiplayerHandler : MonoBehaviour
     {
         Vector3 point = _snakeRotation.TargetPoint;
         point = ApplyVectorChange(changes, point);
-        _snakeRotation.SetTargetPoint(point);
+        _snakeRotation.SetRotateDirection(point);
     }
 
     private Vector3 ApplyVectorChange(List<DataChange> changes, Vector3 startVector)

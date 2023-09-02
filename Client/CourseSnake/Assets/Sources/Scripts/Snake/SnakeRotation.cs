@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SnakeRotation : MonoBehaviour
 {
-    private float _rotateSpeed = 50;
+    private float _rotateSpeed = 60;
     private SnakeMovement _snakeMovement;
     private Vector3 _targetPoint;
 
@@ -23,9 +23,10 @@ public class SnakeRotation : MonoBehaviour
         Rotate();
     }
 
-    public void SetTargetPoint(Vector3 point)
+    public void SetRotateDirection(Vector3 point)
     {
         _targetPoint = point;
+        _targetPoint = new(_targetPoint.x, 0, _targetPoint.z);
         TargetPointSet?.Invoke(_targetPoint);
     }
 
@@ -38,7 +39,6 @@ public class SnakeRotation : MonoBehaviour
     {
         Quaternion previousRotation = transform.rotation;
 
-        //Vector3 rotateDirection = (_targetPoint - transform.position).normalized;
         Vector3 rotateDirection = _targetPoint.normalized;
         Quaternion targetRotation;
 

@@ -3,15 +3,15 @@ using System;
 
 public class MouseClickHandler : MonoBehaviour
 {
-    private SnakeRotation _snakeRotation;
     private SnakeMovement _snakeMovement;
     private Plane _plane;
     private Camera _camera;
 
+    public event Action<Vector3> DirectionSet;
+
     private void Awake()
     {
         _plane = new Plane(Vector3.up, Vector3.zero);
-        _snakeRotation = GetComponent<SnakeRotation>();
         _snakeMovement = GetComponent<SnakeMovement>();
     }
 
@@ -48,8 +48,10 @@ public class MouseClickHandler : MonoBehaviour
         if (_plane.Raycast(ray, out float distance))
         {
             point = ray.GetPoint(distance);
-            //_snakeRotation.SetTargetPoint(point);
-            _snakeRotation.SetTargetPoint(point - transform.position);
+            Vector3 direction = point - transform.position;
+            direction.y = 0;
+            //_snakeRotation.SetRotateDirection();
+            DirectionSet?.Invoke(direction);
         }
     }
 

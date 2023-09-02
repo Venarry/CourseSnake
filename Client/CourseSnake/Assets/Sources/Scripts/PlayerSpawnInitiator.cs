@@ -10,8 +10,7 @@ public class PlayerSpawnInitiator : MonoBehaviour
     [SerializeField] private Button _startGameButton;
 
     private Color _snakeColor = new(1, 1, 1);
-    private float _widthSpawnRange;
-    private float _heightSpawnRange;
+    private Vector2 _spawnArea;
 
     public event Action<Vector3, string, Color> PlayerSpawnInited;
 
@@ -35,18 +34,15 @@ public class PlayerSpawnInitiator : MonoBehaviour
         _snakeColor = image.color;
     }
 
-    public void SetArea(
-        float widthSpawnRange,
-        float heightSpawnRange)
+    public void SetArea(Vector2 area)
     {
-        _widthSpawnRange = widthSpawnRange;
-        _heightSpawnRange = heightSpawnRange;
+        _spawnArea = area;
     }
 
     private void InitPlayer()
     {
-        float targetWidthPosition = UnityEngine.Random.Range(-_widthSpawnRange, _widthSpawnRange);
-        float targetHeightPosition = UnityEngine.Random.Range(-_heightSpawnRange, _heightSpawnRange);
+        float targetWidthPosition = UnityEngine.Random.Range(-_spawnArea.x, _spawnArea.x);
+        float targetHeightPosition = UnityEngine.Random.Range(-_spawnArea.y, _spawnArea.y);
         Vector3 spawnPosition = new(targetWidthPosition, 0, targetHeightPosition);
 
         string name = _name.text;

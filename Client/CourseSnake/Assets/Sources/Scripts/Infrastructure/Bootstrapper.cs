@@ -22,7 +22,10 @@ public class Bootstrapper : MonoBehaviour
         SnakeFactory snakeFactory = new();
         snakeFactory.Init(_camera, _appleSpawnInitiator);
 
-        _playerSpawnInitiator.SetArea(10, 10);
+        Vector2 activeArea = new(20, 20);
+
+        _playerSpawnInitiator.SetArea(activeArea);
+        _appleSpawnInitiator.SetSpawnRange(activeArea);
 
         ISnakeSpawnHandler snakeSpawnHandler;
 
