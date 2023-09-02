@@ -11,7 +11,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
     private SnakeMovement _snakeMovement;
     private SnakeRotation _snakeRotation;
     private SnakeScorePresenter _snakeScorePresenter;
-    private MouseClickHandler _mouseClickHandler;
+    private PlayerClickHandler _mouseClickHandler;
     private bool _isInitialized;
 
     public void Init(Player player,
@@ -20,7 +20,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         SnakeMovement snakeMovement, 
         SnakeRotation snakeRotation, 
         SnakeScorePresenter snakeScorePresenter,
-        MouseClickHandler mouseClickHandler)
+        PlayerClickHandler mouseClickHandler)
     {
         gameObject.SetActive(false);
 
@@ -43,11 +43,12 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 
         _thisPlayer.Position.OnChange += OnPositionChange;
         _thisPlayer.Direction.OnChange += OnDirectionChange;
+        _thisPlayer.OnChange += OnDataChange;
 
         _snakeView.Destroyed += OnSnakeDestroy;
         _mouseClickHandler.DirectionSet += OnDirectionSet;
+        _mouseClickHandler.BoostStateChanged += OnBoostStateChange;
         _snakeMovement.PositionChanged += OnPositionChange;
-        _snakeMovement.BoostStateChanged += OnBoostStateChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
         _snakeScorePresenter.ScoreChanged += OnScoreChanged;
     }
@@ -59,13 +60,27 @@ public class PlayerMultiplayerHandler : MonoBehaviour
 
         _thisPlayer.Position.OnChange -= OnPositionChange;
         _thisPlayer.Direction.OnChange -= OnDirectionChange;
+        _thisPlayer.OnChange -= OnDataChange;
 
         _snakeView.Destroyed -= OnSnakeDestroy;
         _mouseClickHandler.DirectionSet -= OnDirectionSet;
+        _mouseClickHandler.BoostStateChanged -= OnBoostStateChange;
         _snakeMovement.PositionChanged -= OnPositionChange;
-        _snakeMovement.BoostStateChanged -= OnBoostStateChange;
         _snakeRotation.RotationChanged -= OnRotationChanged;
         _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
+    }
+
+    private void OnDataChange(List<DataChange> changes)
+    {
+        foreach (DataChange change in changes)
+        {
+            switch (change.Field)
+            {
+                case "BoostState":
+                    _snakeMovement.SetBoostState((bool)change.Value);
+                    break;
+            }
+        }
     }
 
     private void OnDirectionChange(List<DataChange> changes)

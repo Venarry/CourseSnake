@@ -27,7 +27,7 @@ public class SnakeFactory
         SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
 
         Camera camera = _cameraMovement.GetComponent<Camera>();
-        MouseClickHandler mouseClickHandler = snakeView.AddComponent<MouseClickHandler>();
+        PlayerClickHandler mouseClickHandler = snakeView.AddComponent<PlayerClickHandler>();
         mouseClickHandler.Init(camera);
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
@@ -35,10 +35,8 @@ public class SnakeFactory
         SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
         SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
         snakeNameView.SetName(name);
-        snakeNameView.SetLookAtTarget(_cameraMovement.transform);
+        snakeNameView.LookAtTarget(_cameraMovement.transform);
 
-        //SnakeBody snakeBody = snakeView.GetComponent<SnakeBody>();
-        //snakeBody.Init(snakeBodyParts, _appleFactory);
         snakeView.AddComponent<SnakeCollisionHandler>();
 
         snakeBodyParts.Init(this, color);
@@ -89,10 +87,8 @@ public class SnakeFactory
         SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
         SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
         snakeNameView.SetName(name);
-        snakeNameView.SetLookAtTarget(_cameraMovement.transform);
+        snakeNameView.LookAtTarget(_cameraMovement.transform);
 
-        //SnakeBody snakeBody = snakeView.AddComponent<SnakeBody>();
-        //snakeBody.Init(snakeBodyParts, _appleSpawnInitiator);
         snakeView.AddComponent<SnakeCollisionHandler>();
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);

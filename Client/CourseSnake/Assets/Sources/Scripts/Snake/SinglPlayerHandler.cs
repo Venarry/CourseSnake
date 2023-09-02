@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class SinglPlayerHandler : MonoBehaviour
 {
-    private MouseClickHandler _mouseClickHandler;
+    private PlayerClickHandler _mouseClickHandler;
     private SnakeRotation _snakeRotation;
     private bool _isInitialized;
 
-    public void Init(MouseClickHandler mouseClickHandler, SnakeRotation snakeRotation)
+    public void Init(PlayerClickHandler mouseClickHandler, SnakeRotation snakeRotation)
     {
         gameObject.SetActive(false);
 

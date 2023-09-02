@@ -13,7 +13,7 @@ public class SnakeNameView : MonoBehaviour
         _name.text = name;
     }
 
-    public void SetLookAtTarget(Transform target)
+    public void LookAtTarget(Transform target)
     {
         _lookAtRotator.SetTarget(target, false);
     }

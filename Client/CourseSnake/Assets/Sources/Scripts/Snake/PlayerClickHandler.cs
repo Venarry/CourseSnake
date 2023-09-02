@@ -1,13 +1,14 @@
 using UnityEngine;
 using System;
 
-public class MouseClickHandler : MonoBehaviour
+public class PlayerClickHandler : MonoBehaviour
 {
     private SnakeMovement _snakeMovement;
     private Plane _plane;
     private Camera _camera;
 
     public event Action<Vector3> DirectionSet;
+    public event Action<bool> BoostStateChanged;
 
     private void Awake()
     {
@@ -22,10 +23,6 @@ public class MouseClickHandler : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(0))
-        {
-            
-        }
         HandleMouse();
 
         if (Input.GetMouseButtonDown(0))
@@ -57,6 +54,7 @@ public class MouseClickHandler : MonoBehaviour
 
     private void SetBoostState(bool state)
     {
-        _snakeMovement.SetBoostState(state);
+        //_snakeMovement.SetBoostState(state);
+        BoostStateChanged?.Invoke(state);
     }
 }
