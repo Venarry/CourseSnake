@@ -3,12 +3,12 @@ using UnityEngine;
 public class SnakeBody : MonoBehaviour
 {
     private SnakeBodyParts _owner;
-    private AppleFactory _appleFactory;
+    private AppleSpawnInitiator _appleSpawnInitiator;
 
-    public void Init(SnakeBodyParts owner, AppleFactory appleFactory)
+    public void Init(SnakeBodyParts owner, AppleSpawnInitiator appleSpawnInitiator)
     {
         _owner = owner;
-        _appleFactory = appleFactory;
+        _appleSpawnInitiator = appleSpawnInitiator;
     }
 
     public bool IsOwner(SnakeBodyParts snakeBodyParts) =>
@@ -17,7 +17,7 @@ public class SnakeBody : MonoBehaviour
     public void Destroy()
     {
         float reward = transform.localScale.x;
-        _appleFactory.Create(reward, transform.position);
+        _appleSpawnInitiator.InitSpawn(transform.position, reward);
 
         Destroy(gameObject);
     }

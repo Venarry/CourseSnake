@@ -13,7 +13,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
 
     public event Action<SnakeView> PlayerSpawned;
     public event Action<SnakeView> SnakeSpawned;
-    public event Action<string> SnakeRemoved;
+    public event Action<SnakeView> SnakeRemoved;
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,
@@ -96,7 +96,9 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
         if(_snakes[key] != null)
             _snakes[key].Destroy();
 
+        SnakeView removedSnake = _snakes[key];
+
         _snakes.Remove(key);
-        SnakeRemoved?.Invoke(key);
+        SnakeRemoved?.Invoke(removedSnake);
     }
 }

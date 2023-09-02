@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 
 public class Apple : MonoBehaviour
 {
     [SerializeField] private float _reward = 1;
+
+    public event Action<Apple> Destroyed;
 
     private void Awake()
     {
@@ -25,6 +28,7 @@ public class Apple : MonoBehaviour
         if(other.TryGetComponent(out SnakeView snakeView))
         {
             snakeView.AddScore(_reward);
+            Destroyed?.Invoke(this);
             Destroy(gameObject);
         }
     }

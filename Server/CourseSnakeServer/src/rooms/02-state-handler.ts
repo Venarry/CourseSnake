@@ -1,5 +1,5 @@
 import { Room, Client, updateLobby } from "colyseus";
-import { Schema, type, MapSchema } from "@colyseus/schema";
+import { Schema, type, MapSchema, ArraySchema } from "@colyseus/schema";
 
 export class MyVector3 extends Schema
 {
@@ -26,6 +26,23 @@ export class MyVector3 extends Schema
         this.x = newValues.x;
         this.y = newValues.y;
         this.z = newValues.z;
+    }
+}
+
+export class ServerApple extends Schema
+{
+    @type(MyVector3)
+    Position = new MyVector3(0, 0, 0);
+
+    @type("number")
+    Reward = 0;
+
+    constructor (position: MyVector3, reward: number)
+    {
+        super();
+
+        this.Position.SetValues(position);
+        this.Reward = reward;
     }
 }
 
@@ -90,9 +107,11 @@ export class State extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 
-    something = "This attribute won't be sent to the client-side";
+    @type([ ServerApple ])
+    Apples = new ArraySchema<ServerApple>();
 
-    CreatePlayer(sessionId: string, data: any) {
+    CreatePlayer(sessionId: string, data: any) 
+    {
         this.players.set(sessionId, new Player(data));
     }
 
@@ -105,6 +124,12 @@ export class State extends Schema {
         }
 
         this.players.delete(sessionId);
+    }
+
+    CreateApple(position: MyVector3, reward: number)
+    {
+        let apple = new ServerApple(position, reward);
+        this.Apples.push(apple);
     }
 
     SetPlayerPosition(sessionId: string, position: MyVector3) 
@@ -180,6 +205,11 @@ export class StateHandlerRoom extends Room<State> {
         this.onMessage("PlayerDestroyed", (client) => 
         {
             this.state.RemovePlayer(client.sessionId);
+        });
+
+        this.onMessage("CreateApple", (client, data) => 
+        {
+            this.state.CreateApple(data.Position, data.Reward);
         });
 
         this.onMessage("EnemyDestroyed", (client, id) => 

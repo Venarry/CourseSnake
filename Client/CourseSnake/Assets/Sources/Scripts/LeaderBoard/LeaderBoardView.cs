@@ -9,8 +9,8 @@ public class LeaderBoardView : MonoBehaviour
 
     private ISnakeSpawnHandler _spawnHandler;
     private LeaderBoardPlayerDataFactory _playerDataFactory;
-    private readonly Dictionary<string, LeaderBoardPlayer> _players = new();
-    private List<LeaderBoardPlayer> _leaders = new();
+    private readonly Dictionary<string, LeaderBoardPlayer> _leaders = new();
+    private List<LeaderBoardPlayer> _leadersInBoard = new();
     private bool _isInitialized;
 
     public void Init(ISnakeSpawnHandler snakeSpawnHandler, LeaderBoardPlayerDataFactory playerDataFactory)
@@ -36,38 +36,40 @@ public class LeaderBoardView : MonoBehaviour
     private void OnSnakeSpawn(SnakeView snake)
     {
         LeaderBoardPlayer leaderBoardPlayer = _playerDataFactory.Create(_parent, snake.Login);
-        _players.Add(snake.Id, leaderBoardPlayer);
-        _leaders.Add(leaderBoardPlayer);
+        _leaders.Add(snake.Id, leaderBoardPlayer);
+        _leadersInBoard.Add(leaderBoardPlayer);
 
         snake.ScoreChanged += OnScoreChange;
-        //snake.Destroyed += () => snake.ScoreChanged -= OnScoreChange;
         RefreshLeaderBoard();
     }
 
-    private void OnSnakeRemoved(string key)
+    private void OnSnakeRemoved(SnakeView snake)
     {
-        LeaderBoardPlayer currentPlayer = _players[key];
+        string snakeId = snake.Id;
+        LeaderBoardPlayer currentPlayer = _leaders[snakeId];
 
-        _players.Remove(key);
-        _leaders.Remove(currentPlayer);
+        _leaders.Remove(snakeId);
+        _leadersInBoard.Remove(currentPlayer);
+
+        snake.ScoreChanged -= OnScoreChange;
         Destroy(currentPlayer.gameObject);
         RefreshLeaderBoard();
     }
 
-    private void OnScoreChange(string key, float value)
+    private void OnScoreChange(SnakeView snake, float value)
     {
-        _players[key].UpdateScore(value);
+        _leaders[snake.Id].UpdateScore(value);
         RefreshLeaderBoard();
     }
 
     private void RefreshLeaderBoard()
     {
-        _leaders = _leaders.OrderByDescending(currentLeader => currentLeader.Score).ToList();
+        _leadersInBoard = _leadersInBoard.OrderByDescending(currentLeader => currentLeader.Score).ToList();
 
-        for (int i = 0; i < _leaders.Count; i++)
+        for (int i = 0; i < _leadersInBoard.Count; i++)
         {
-            _leaders[i].UpdateLeaderPosition(i + 1);
-            _leaders[i].transform.SetSiblingIndex(i);
+            _leadersInBoard[i].UpdateLeaderPosition(i + 1);
+            _leadersInBoard[i].transform.SetSiblingIndex(i);
         }
     }
 }

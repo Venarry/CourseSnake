@@ -123,5 +123,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
 
             RoomDataUpdated?.Invoke(roomInfo);
         }
+
+        RoomsLoaded?.Invoke();
     }
 }

@@ -46,6 +46,7 @@ public class SnakeDieReaction : MonoBehaviour
 
     private void OnSnakeDestroy()
     {
+        _currentSnake.Destroyed -= OnSnakeDestroy;
         _spawnInitiator.SetMenuState(true);
         _currentSnake = null;
     }
