@@ -27,7 +27,7 @@ public class Bootstrapper : MonoBehaviour
         _playerSpawnInitiator.SetArea(activeArea);
         _appleSpawnInitiator.SetSpawnRange(activeArea);
 
-        ISnakeSpawnHandler snakeSpawnHandler;
+        ISnakeHandler snakeSpawnHandler;
 
         try
         {
@@ -58,7 +58,9 @@ public class Bootstrapper : MonoBehaviour
             Debug.Log("Start Singlplayer");
         }
 
+        _appleSpawnInitiator.Init(snakeSpawnHandler);
         _appleSpawnInitiator.InitRandomApples(20);
+
         _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
     }

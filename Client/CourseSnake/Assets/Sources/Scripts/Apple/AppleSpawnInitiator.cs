@@ -3,20 +3,36 @@ using UnityEngine;
 
 public class AppleSpawnInitiator : MonoBehaviour
 {
-    [SerializeField] private float _spawnTime = 2f;
+    [SerializeField] private float _baseSpawnTime = 2f;
     [SerializeField] private Vector2 _spawnRange;
+
     private float _currentTime;
+    private ISnakeHandler _snakeHandler;
+    private bool _isInitialized;
 
     public event Action<Vector3, float> Inited;
 
+    public void Init(ISnakeHandler snakeHandler)
+    {
+        _snakeHandler = snakeHandler;
+        _isInitialized = true;
+    }
+
     private void Update()
     {
+        if (_isInitialized == false)
+            return;
+
         _currentTime += Time.deltaTime;
 
-        if(_currentTime >= _spawnTime)
+        int snakeCount = _snakeHandler.SnakeCount;
+
+        if (snakeCount == 0)
+            return;
+
+        if(_currentTime >= _baseSpawnTime / snakeCount)
         {
             _currentTime = 0;
-
             InitRandomApple();
         }
     }

@@ -49,7 +49,6 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _snakeMovement.PositionChanged += OnPositionChange;
         _snakeMovement.BoostStateChanged += OnBoostStateChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
-        //_snakeRotation.TargetPointSet += OnDirectionSet;
         _snakeScorePresenter.ScoreChanged += OnScoreChanged;
     }
 
@@ -66,7 +65,6 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _snakeMovement.PositionChanged -= OnPositionChange;
         _snakeMovement.BoostStateChanged -= OnBoostStateChange;
         _snakeRotation.RotationChanged -= OnRotationChanged;
-        //_snakeRotation.TargetPointSet -= OnDirectionSet;
         _snakeScorePresenter.ScoreChanged -= OnScoreChanged;
     }
 

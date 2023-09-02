@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class SinglPlayerUserHandler : ISnakeSpawnHandler
+public class SinglPlayerUserHandler : ISnakeHandler
 {
     private PlayerSpawnInitiator _playerSpawnInitiator;
     private readonly SnakeFactory _snakeFactory;
@@ -9,6 +9,8 @@ public class SinglPlayerUserHandler : ISnakeSpawnHandler
     public event Action<SnakeView> PlayerSpawned;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<SnakeView> SnakeRemoved;
+
+    public int SnakeCount => throw new NotImplementedException();
 
     public SinglPlayerUserHandler(PlayerSpawnInitiator playerSpawnInitiator, SnakeFactory snakeFactory)
     {

@@ -7,13 +7,13 @@ public class LeaderBoardView : MonoBehaviour
 {
     [SerializeField] private Transform _parent;
 
-    private ISnakeSpawnHandler _spawnHandler;
+    private ISnakeHandler _spawnHandler;
     private LeaderBoardPlayerDataFactory _playerDataFactory;
     private readonly Dictionary<string, LeaderBoardPlayer> _leaders = new();
     private List<LeaderBoardPlayer> _leadersInBoard = new();
     private bool _isInitialized;
 
-    public void Init(ISnakeSpawnHandler snakeSpawnHandler, LeaderBoardPlayerDataFactory playerDataFactory)
+    public void Init(ISnakeHandler snakeSpawnHandler, LeaderBoardPlayerDataFactory playerDataFactory)
     {
         gameObject.SetActive(false);
 

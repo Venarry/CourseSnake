@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
+public class MultiplayerUserHandler : MonoBehaviour, ISnakeHandler
 {
     private readonly Dictionary<string, SnakeView> _snakes = new();
     private MapMultiplayerHandler _mapMultiplayerHandler;
@@ -14,6 +14,8 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeSpawnHandler
     public event Action<SnakeView> PlayerSpawned;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<SnakeView> SnakeRemoved;
+
+    public int SnakeCount => _snakes.Count;
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,

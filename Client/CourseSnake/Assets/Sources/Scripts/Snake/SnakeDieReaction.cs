@@ -5,11 +5,11 @@ public class SnakeDieReaction : MonoBehaviour
 {
     [SerializeField] private PlayerSpawnInitiator _spawnInitiator;
 
-    private ISnakeSpawnHandler _spawnHandler;
+    private ISnakeHandler _spawnHandler;
     private SnakeView _currentSnake;
     private bool _isInitialized;
 
-    public void Init(ISnakeSpawnHandler snakeSpawnHandler)
+    public void Init(ISnakeHandler snakeSpawnHandler)
     {
         gameObject.SetActive(false);
 
