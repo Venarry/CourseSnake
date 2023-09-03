@@ -8,6 +8,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] private MapInfo _mapInfo;
     [SerializeField] private LeaderBoardView _leaderBoardView;
     [SerializeField] private AppleSpawnInitiator _appleSpawnInitiator;
+    [SerializeField] private MiniMapView _miniMapView;
 
     private async void Awake()
     {
@@ -22,12 +23,12 @@ public class Bootstrapper : MonoBehaviour
         SnakeFactory snakeFactory = new();
         
 
-        Vector2 activeArea = new(65, 65);
+        Vector2 mapSize = new(65, 65);
 
-        _playerSpawnInitiator.SetArea(activeArea);
-        _appleSpawnInitiator.SetSpawnRange(activeArea);
+        _playerSpawnInitiator.SetArea(mapSize);
+        _appleSpawnInitiator.SetSpawnRange(mapSize);
 
-        ISnakeHandler snakeSpawnHandler;
+        ISnakeHandler snakeHandler;
         IAppleHandler appleHandler;
 
         try
@@ -54,7 +55,7 @@ public class Bootstrapper : MonoBehaviour
                 appleFactory);
 
             appleHandler = appleSpawnHandler;
-            snakeSpawnHandler = multiplayerUserHandler;
+            snakeHandler = multiplayerUserHandler;
             Debug.Log("Start Multiplayer");
         }
         catch
@@ -65,17 +66,19 @@ public class Bootstrapper : MonoBehaviour
             SinglePlayerAppleHandler singlePlayerAppleHandler = new();
 
             appleHandler = singlePlayerAppleHandler;
-            snakeSpawnHandler = singlPlayerUserHandler;
+            snakeHandler = singlPlayerUserHandler;
             Debug.Log("Start Singlplayer");
         }
 
         snakeFactory.Init(_camera, _appleSpawnInitiator, appleHandler);
 
-        _appleSpawnInitiator.Init(snakeSpawnHandler);
+        _appleSpawnInitiator.Init(snakeHandler);
         _appleSpawnInitiator.InitRandomApples(20);
 
-        _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
+        _leaderBoardView.Init(snakeHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
+
+        _miniMapView.Init(snakeHandler, mapSize);
 
         //_playerSpawnInitiator.InitBots(GameConfig.BotsCount);
     }
