@@ -15,6 +15,8 @@ public class SinglPlayerUserHandler : ISnakeHandler
     public int SnakeCount => throw new NotImplementedException();
     public int BotsCount => throw new NotImplementedException();
 
+    public bool CanSpawnBots => throw new NotImplementedException();
+
     public SinglPlayerUserHandler(PlayerSpawnInitiator playerSpawnInitiator, SnakeFactory snakeFactory)
     {
         _playerSpawnInitiator = playerSpawnInitiator;

@@ -39,7 +39,13 @@ public class Bootstrapper : MonoBehaviour
 
             MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
             MultiplayerUsersHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUsersHandler>();
-            multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, _playerSpawnInitiator, snakeFactory);
+
+            multiplayerUserHandler.Init(mapMultiplayerHandler, 
+                stateHandlerRoom, 
+                _playerSpawnInitiator, 
+                snakeFactory,
+                lobbyRoomHandler);
+
             _snakeDieReaction.Init(multiplayerUserHandler);
 
             MultiplayerAppleSpawnHandler appleSpawnHandler = new(
@@ -71,8 +77,6 @@ public class Bootstrapper : MonoBehaviour
         _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
 
-        _playerSpawnInitiator.InitBot();
-        _playerSpawnInitiator.InitBot();
-        _playerSpawnInitiator.InitBot();
+        //_playerSpawnInitiator.InitBots(GameConfig.BotsCount);
     }
 }

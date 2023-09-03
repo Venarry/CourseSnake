@@ -5,10 +5,11 @@ using UnityEngine;
 public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
 {
     private readonly Dictionary<string, SnakeView> _snakes = new();
-    private readonly Dictionary<string, SnakeView> _bots = new();
+    private readonly List<SnakeView> _bots = new();
     private MapMultiplayerHandler _mapMultiplayerHandler;
     private StateHandlerRoom _stateHandlerRoom;
-    private PlayerSpawnInitiator _playerSpawner;
+    private LobbyRoomHandler _lobbyRoomHandler;
+    private PlayerSpawnInitiator _playerSpawnInitiator;
     private SnakeFactory _snakeFactory;
     private bool _isInitialized;
     private int _botId;
@@ -21,18 +22,21 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
 
     public int SnakeCount => _snakes.Count;
     public int BotsCount => _bots.Count;
+    public bool CanSpawnBots { get; private set; }
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
         StateHandlerRoom stateHandlerRoom,
         PlayerSpawnInitiator playerSpawner,
-        SnakeFactory snakeFactory)
+        SnakeFactory snakeFactory,
+        LobbyRoomHandler lobbyRoomHandler)
     {
         gameObject.SetActive(false);
 
         _mapMultiplayerHandler = mapMultiplayerHandler;
         _stateHandlerRoom = stateHandlerRoom;
-        _playerSpawner = playerSpawner;
+        _playerSpawnInitiator = playerSpawner;
         _snakeFactory = snakeFactory;
+        _lobbyRoomHandler = lobbyRoomHandler;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -43,12 +47,28 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         if (_isInitialized == false)
             return;
 
-        _playerSpawner.PlayerSpawnInited += OnPlayerInit;
-        _playerSpawner.BotSpawnInited += OnBotInit;
+        _playerSpawnInitiator.PlayerSpawnInited += OnPlayerInit;
+        _playerSpawnInitiator.BotSpawnInited += OnBotInit;
         _mapMultiplayerHandler.PlayerJoined += OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined += OnEnemyJoin;
         _mapMultiplayerHandler.UserLeaved += OnUserLeave;
         _mapMultiplayerHandler.EnemyDead += OnUserLeave;
+
+        _lobbyRoomHandler.PlayersCountChanged += OnPlayersCountChange;
+    }
+
+    private void OnPlayersCountChange(int count)
+    {
+        if (count > 1)
+        {
+            CanSpawnBots = false;
+            DestroyBots();
+        }
+        else if(CanSpawnBots == false)
+        {
+            CanSpawnBots = true;
+            _playerSpawnInitiator.InitBots(GameConfig.BotsCount);
+        }
     }
 
     private void OnDisable()
@@ -56,18 +76,20 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         if (_isInitialized == false)
             return;
 
-        _playerSpawner.PlayerSpawnInited -= OnPlayerInit;
-        _playerSpawner.BotSpawnInited -= OnBotInit;
+        _playerSpawnInitiator.PlayerSpawnInited -= OnPlayerInit;
+        _playerSpawnInitiator.BotSpawnInited -= OnBotInit;
         _mapMultiplayerHandler.PlayerJoined -= OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined -= OnEnemyJoin;
         _mapMultiplayerHandler.UserLeaved -= OnUserLeave;
+
+        _lobbyRoomHandler.PlayersCountChanged -= OnPlayersCountChange;
     }
 
     private void OnBotInit(Vector3 position, string name, Color color)
     {
         string currentBotId = _botId++.ToString();
         SnakeView snake = _snakeFactory.CreateBot(position, color, currentBotId, name);
-        _bots.Add(currentBotId, snake);
+        _bots.Add(snake);
         snake.Destroyed += OnBotDestroyed;
 
         BotSpawned?.Invoke(snake);
@@ -77,7 +99,7 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
     private void OnBotDestroyed(SnakeView snake)
     {
         snake.Destroyed -= OnBotDestroyed;
-        _bots.Remove(snake.Id);
+        _bots.Remove(snake);
         SnakeRemoved?.Invoke(snake);
     }
 
@@ -97,15 +119,17 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         SnakeView enemy = _snakeFactory.CreateEnemy(player, key);
         _snakes.Add(key, enemy);
 
-        foreach (KeyValuePair<string, SnakeView> bot in _bots)
+        SnakeSpawned?.Invoke(enemy);
+    }
+
+    private void DestroyBots()
+    {
+        for (int i = _bots.Count - 1; i >= 0; i--)
         {
-            bot.Value.Destroyed -= OnBotDestroyed;
-            bot.Value.Destroy();
+            _bots[i].Destroy();
         }
 
         _bots.Clear();
-
-        SnakeSpawned?.Invoke(enemy);
     }
 
     private void OnPlayerInit(Vector3 position, string name, Color color)
