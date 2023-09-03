@@ -8,7 +8,7 @@ public class MapMultiplayerHandler : MonoBehaviour
 
     public event Action<string, Player> PlayerJoined;
     public event Action<string, Player> EnemyJoined;
-    public event Action<string> EnemyLeaved;
+    public event Action<string> UserLeaved;
     public event Action<string> EnemyDead;
 
     private void Awake()
@@ -59,7 +59,7 @@ public class MapMultiplayerHandler : MonoBehaviour
 
     private void OnPlayerRemove(string key, Player value)
     {
-        EnemyLeaved?.Invoke(key);
+        UserLeaved?.Invoke(key);
     }
 
     public void LeaveRoom()

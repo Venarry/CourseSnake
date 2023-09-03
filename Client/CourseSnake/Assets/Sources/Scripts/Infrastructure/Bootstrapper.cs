@@ -70,6 +70,8 @@ public class Bootstrapper : MonoBehaviour
 
         _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
+
+        _playerSpawnInitiator.InitBot();
         _playerSpawnInitiator.InitBot();
         _playerSpawnInitiator.InitBot();
     }

@@ -25,7 +25,7 @@ public class AppleSpawnInitiator : MonoBehaviour
 
         _currentTime += Time.deltaTime;
 
-        int snakeCount = _snakeHandler.SnakeCount;
+        int snakeCount = _snakeHandler.SnakeCount + _snakeHandler.BotsCount;
 
         if (snakeCount == 0)
             return;

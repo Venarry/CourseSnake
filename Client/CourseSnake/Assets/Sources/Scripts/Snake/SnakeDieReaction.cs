@@ -45,6 +45,10 @@ public class SnakeDieReaction : MonoBehaviour
     private void OnBotDestroyed(SnakeView snake)
     {
         snake.Destroyed -= OnBotDestroyed;
+
+        if (_spawnHandler.SnakeCount > 1)
+            return;
+
         _spawnInitiator.InitBot();
     }
 

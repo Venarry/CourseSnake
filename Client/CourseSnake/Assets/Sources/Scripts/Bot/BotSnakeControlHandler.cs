@@ -43,8 +43,6 @@ public class BotSnakeControlHandler : MonoBehaviour
             return;
 
         _currentApple = apple;
-        Debug.Log(_currentApple.transform.position);
-        _snakeRotation.SetRotateDirection(_currentApple.transform.position - transform.position);
         _snakeRotation.SetRotateDirection(_currentApple.transform.position);
         _currentApple.Destroyed += OnAppleDestroyed;
     }
@@ -61,10 +59,8 @@ public class BotSnakeControlHandler : MonoBehaviour
     {
         if (_appleHandler.TryGetRandomApple(out _currentApple))
         {
-            _snakeRotation.SetRotateDirection(_currentApple.transform.position - transform.position);
             _snakeRotation.SetRotateDirection(_currentApple.transform.position);
             _currentApple.Destroyed += OnAppleDestroyed;
-            Debug.Log(_currentApple.transform.position);
         }
     }
 }
