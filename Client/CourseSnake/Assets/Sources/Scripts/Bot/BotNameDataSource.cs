@@ -13,6 +13,12 @@ public class BotNameDataSource
         "viktuzz",
         "player",
         "sssssss",
+        "Маша",
+        "Сэргей",
+        "сын маминой подруги",
+        "я не бот",
+        "я бот разраба",
+        "я не знал что ей 13",
     };
 
     public static string GetRandomName() =>
