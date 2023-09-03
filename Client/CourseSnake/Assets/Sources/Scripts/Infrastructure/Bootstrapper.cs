@@ -20,14 +20,15 @@ public class Bootstrapper : MonoBehaviour
         LeaderBoardPlayerDataFactory leaderBoardPlayerDataFactory = new();
 
         SnakeFactory snakeFactory = new();
-        snakeFactory.Init(_camera, _appleSpawnInitiator);
+        
 
-        Vector2 activeArea = new(20, 20);
+        Vector2 activeArea = new(30, 30);
 
         _playerSpawnInitiator.SetArea(activeArea);
         _appleSpawnInitiator.SetSpawnRange(activeArea);
 
         ISnakeHandler snakeSpawnHandler;
+        IAppleHandler appleHandler;
 
         try
         {
@@ -37,7 +38,7 @@ public class Bootstrapper : MonoBehaviour
             snakeFactory.InitStateHandlerRoom(stateHandlerRoom);
 
             MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
-            MultiplayerUserHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUserHandler>();
+            MultiplayerUsersHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUsersHandler>();
             multiplayerUserHandler.Init(mapMultiplayerHandler, stateHandlerRoom, _playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(multiplayerUserHandler);
 
@@ -46,6 +47,7 @@ public class Bootstrapper : MonoBehaviour
                 _appleSpawnInitiator, 
                 appleFactory);
 
+            appleHandler = appleSpawnHandler;
             snakeSpawnHandler = multiplayerUserHandler;
             Debug.Log("Start Multiplayer");
         }
@@ -54,14 +56,21 @@ public class Bootstrapper : MonoBehaviour
             SinglPlayerUserHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(singlPlayerUserHandler);
 
+            SinglePlayerAppleHandler singlePlayerAppleHandler = new();
+
+            appleHandler = singlePlayerAppleHandler;
             snakeSpawnHandler = singlPlayerUserHandler;
             Debug.Log("Start Singlplayer");
         }
+
+        snakeFactory.Init(_camera, _appleSpawnInitiator, appleHandler);
 
         _appleSpawnInitiator.Init(snakeSpawnHandler);
         _appleSpawnInitiator.InitRandomApples(20);
 
         _leaderBoardView.Init(snakeSpawnHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
+        _playerSpawnInitiator.InitBot();
+        _playerSpawnInitiator.InitBot();
     }
 }

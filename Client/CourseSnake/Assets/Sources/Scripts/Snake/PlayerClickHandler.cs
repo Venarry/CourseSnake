@@ -3,17 +3,15 @@ using System;
 
 public class PlayerClickHandler : MonoBehaviour
 {
-    private SnakeMovement _snakeMovement;
     private Plane _plane;
     private Camera _camera;
 
-    public event Action<Vector3> DirectionSet;
+    public event Action<Vector3> PointSet;
     public event Action<bool> BoostStateChanged;
 
     private void Awake()
     {
         _plane = new Plane(Vector3.up, Vector3.zero);
-        _snakeMovement = GetComponent<SnakeMovement>();
     }
 
     public void Init(Camera camera)
@@ -45,16 +43,23 @@ public class PlayerClickHandler : MonoBehaviour
         if (_plane.Raycast(ray, out float distance))
         {
             point = ray.GetPoint(distance);
-            Vector3 direction = point - transform.position;
-            direction.y = 0;
-            //_snakeRotation.SetRotateDirection();
-            DirectionSet?.Invoke(direction);
+
+            Vector3 targetPoint = point;
+            float minPointDistance = 2f;
+
+            if (Vector3.Distance(transform.position, targetPoint) < minPointDistance)
+            {
+                targetPoint += (targetPoint - transform.position).normalized * minPointDistance;
+            }
+            //Vector3 direction = point - transform.position;
+            //direction.y = 0;
+
+            PointSet?.Invoke(targetPoint);
         }
     }
 
     private void SetBoostState(bool state)
     {
-        //_snakeMovement.SetBoostState(state);
         BoostStateChanged?.Invoke(state);
     }
 }

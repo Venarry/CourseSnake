@@ -27,6 +27,7 @@ public class SnakeRotation : MonoBehaviour
     {
         _targetPoint = point;
         _targetPoint = new(_targetPoint.x, 0, _targetPoint.z);
+
         TargetPointSet?.Invoke(_targetPoint);
     }
 
@@ -39,7 +40,8 @@ public class SnakeRotation : MonoBehaviour
     {
         Quaternion previousRotation = transform.rotation;
 
-        Vector3 rotateDirection = _targetPoint.normalized;
+        //Vector3 rotateDirection = _targetPoint.normalized;
+        Vector3 rotateDirection = (_targetPoint - transform.position).normalized;
         Quaternion targetRotation;
 
         if (rotateDirection != Vector3.zero)

@@ -22,7 +22,7 @@ public class SinglPlayerHandler : MonoBehaviour
         if (_isInitialized == false)
             return;
 
-        _mouseClickHandler.DirectionSet += OnDirectionSet;
+        _mouseClickHandler.PointSet += OnDirectionSet;
     }
 
     private void OnDisable()
@@ -30,7 +30,7 @@ public class SinglPlayerHandler : MonoBehaviour
         if (_isInitialized == false)
             return;
 
-        _mouseClickHandler.DirectionSet -= OnDirectionSet;
+        _mouseClickHandler.PointSet -= OnDirectionSet;
     }
 
     private void OnDirectionSet(Vector3 direction)

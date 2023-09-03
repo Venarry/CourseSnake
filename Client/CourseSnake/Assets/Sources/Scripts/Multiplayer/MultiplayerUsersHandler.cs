@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MultiplayerUserHandler : MonoBehaviour, ISnakeHandler
+public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
 {
     private readonly Dictionary<string, SnakeView> _snakes = new();
     private MapMultiplayerHandler _mapMultiplayerHandler;
@@ -10,8 +10,10 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeHandler
     private PlayerSpawnInitiator _playerSpawner;
     private SnakeFactory _snakeFactory;
     private bool _isInitialized;
+    private int _botId;
 
     public event Action<SnakeView> PlayerSpawned;
+    public event Action<SnakeView> BotSpawned;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<SnakeView> SnakeRemoved;
 
@@ -39,10 +41,19 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeHandler
             return;
 
         _playerSpawner.PlayerSpawnInited += OnPlayerInit;
+        _playerSpawner.BotSpawnInited += OnBotInit;
         _mapMultiplayerHandler.PlayerJoined += OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined += OnEnemyJoin;
         _mapMultiplayerHandler.EnemyLeaved += OnEnemyLeave;
         _mapMultiplayerHandler.EnemyDead += OnEnemyLeave;
+    }
+
+    private void OnBotInit(Vector3 position, string name, Color color)
+    {
+        int currentBotId = _botId++;
+        SnakeView snake = _snakeFactory.CreateBot(position, color, currentBotId.ToString(), name);
+        BotSpawned?.Invoke(snake);
+        SnakeSpawned?.Invoke(snake);
     }
 
     private void OnDisable()
@@ -51,6 +62,7 @@ public class MultiplayerUserHandler : MonoBehaviour, ISnakeHandler
             return;
 
         _playerSpawner.PlayerSpawnInited -= OnPlayerInit;
+        _playerSpawner.BotSpawnInited -= OnBotInit;
         _mapMultiplayerHandler.PlayerJoined -= OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined -= OnEnemyJoin;
         _mapMultiplayerHandler.EnemyLeaved -= OnEnemyLeave;

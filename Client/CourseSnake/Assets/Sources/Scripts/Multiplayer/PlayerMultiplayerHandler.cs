@@ -46,7 +46,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _thisPlayer.OnChange += OnDataChange;
 
         _snakeView.Destroyed += OnSnakeDestroy;
-        _mouseClickHandler.DirectionSet += OnDirectionSet;
+        _mouseClickHandler.PointSet += OnDirectionSet;
         _mouseClickHandler.BoostStateChanged += OnBoostStateChange;
         _snakeMovement.PositionChanged += OnPositionChange;
         _snakeRotation.RotationChanged += OnRotationChanged;
@@ -63,7 +63,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _thisPlayer.OnChange -= OnDataChange;
 
         _snakeView.Destroyed -= OnSnakeDestroy;
-        _mouseClickHandler.DirectionSet -= OnDirectionSet;
+        _mouseClickHandler.PointSet -= OnDirectionSet;
         _mouseClickHandler.BoostStateChanged -= OnBoostStateChange;
         _snakeMovement.PositionChanged -= OnPositionChange;
         _snakeRotation.RotationChanged -= OnRotationChanged;
@@ -108,7 +108,7 @@ public class PlayerMultiplayerHandler : MonoBehaviour
         _snakeRotation.SetRotateDirection(point);
     }
 
-    private void OnSnakeDestroy()
+    private void OnSnakeDestroy(SnakeView snake)
     {
         _stateHandlerRoom.SendPlayerData("PlayerDestroyed");
     }

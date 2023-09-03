@@ -10,7 +10,7 @@ public class SnakeView : MonoBehaviour
     private bool _isInitialized;
 
     public event Action<SnakeView, float> ScoreChanged;
-    public event Action Destroyed;
+    public event Action<SnakeView> Destroyed;
 
     public string Id { get; private set; }
     public string Login => _snakeNameView.Login;
@@ -70,7 +70,7 @@ public class SnakeView : MonoBehaviour
 
     private void OnSnakeDestroyed()
     {
-        Destroyed?.Invoke();
+        Destroyed?.Invoke(this);
     }
 
     private void OnScoreChanged(float score)

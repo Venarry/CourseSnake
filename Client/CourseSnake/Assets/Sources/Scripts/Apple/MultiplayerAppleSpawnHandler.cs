@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class MultiplayerAppleSpawnHandler
+public class MultiplayerAppleSpawnHandler : IAppleHandler
 {
     private readonly StateHandlerRoom _stateHandlerRoom;
     private readonly AppleFactory _appleFactory;
 
     private readonly Dictionary<string, Apple> _apples = new();
+
+    public event Action<Apple> AppleAdded;
 
     public MultiplayerAppleSpawnHandler(StateHandlerRoom stateHandlerRoom,
         AppleSpawnInitiator appleSpawnInitiator,
@@ -20,14 +24,28 @@ public class MultiplayerAppleSpawnHandler
         appleSpawnInitiator.Inited += OnAppleInited;
     }
 
+    public bool TryGetRandomApple(out Apple apple)
+    {
+        apple = null;
+
+        if (_apples.Count == 0)
+            return false;
+
+        int targetIndex = UnityEngine.Random.Range(0, _apples.Count);
+        apple = _apples.ElementAt(targetIndex).Value;
+
+        return true;
+    }
+
     private void OnAppleRemove(string key, ServerApple value)
     {
         if(_apples[key] != null)
         {
-            UnityEngine.Object.Destroy(_apples[key].gameObject);
+            _apples[key].Destroyed -= OnAppleDestroy;
+            _apples[key].RemoveApple();
         }
 
-        _apples.Remove(value.Id.ToString());
+        _apples.Remove(key);
     }
 
     private void OnAppleAdd(string key, ServerApple value)
@@ -37,6 +55,8 @@ public class MultiplayerAppleSpawnHandler
         _apples.Add(key, apple);
 
         apple.Destroyed += OnAppleDestroy;
+
+        AppleAdded?.Invoke(apple);
     }
 
     private void OnAppleDestroy(Apple apple)

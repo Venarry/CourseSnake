@@ -25,6 +25,7 @@ public class SnakeDieReaction : MonoBehaviour
             return;
 
         _spawnHandler.PlayerSpawned += OnSnakeSpawn;
+        _spawnHandler.BotSpawned += OnBotSpawned;
     }
 
     private void OnDisable()
@@ -33,6 +34,18 @@ public class SnakeDieReaction : MonoBehaviour
             return;
 
         _spawnHandler.PlayerSpawned -= OnSnakeSpawn;
+        _spawnHandler.BotSpawned -= OnBotSpawned;
+    }
+
+    private void OnBotSpawned(SnakeView snake)
+    {
+        snake.Destroyed += OnBotDestroyed;
+    }
+
+    private void OnBotDestroyed(SnakeView snake)
+    {
+        snake.Destroyed -= OnBotDestroyed;
+        _spawnInitiator.InitBot();
     }
 
     private void OnSnakeSpawn(SnakeView snake)
@@ -41,12 +54,12 @@ public class SnakeDieReaction : MonoBehaviour
             throw new ArgumentException();
 
         _currentSnake = snake;
-        snake.Destroyed += OnSnakeDestroy;
+        snake.Destroyed += OnPlayerDestroy;
     }
 
-    private void OnSnakeDestroy()
+    private void OnPlayerDestroy(SnakeView snake)
     {
-        _currentSnake.Destroyed -= OnSnakeDestroy;
+        _currentSnake.Destroyed -= OnPlayerDestroy;
         _spawnInitiator.SetMenuState(true);
         _currentSnake = null;
     }

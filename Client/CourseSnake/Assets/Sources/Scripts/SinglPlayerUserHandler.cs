@@ -7,6 +7,7 @@ public class SinglPlayerUserHandler : ISnakeHandler
     private readonly SnakeFactory _snakeFactory;
 
     public event Action<SnakeView> PlayerSpawned;
+    public event Action<SnakeView> BotSpawned;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<SnakeView> SnakeRemoved;
 

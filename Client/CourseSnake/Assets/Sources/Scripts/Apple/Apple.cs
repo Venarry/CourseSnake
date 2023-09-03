@@ -23,13 +23,18 @@ public class Apple : MonoBehaviour
         transform.localScale = new Vector3(_reward, _reward, _reward);
     }
 
+    public void RemoveApple()
+    {
+        Destroyed?.Invoke(this);
+        Destroy(gameObject);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.TryGetComponent(out SnakeView snakeView))
         {
             snakeView.AddScore(_reward);
-            Destroyed?.Invoke(this);
-            Destroy(gameObject);
+            RemoveApple();
         }
     }
 }

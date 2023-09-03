@@ -9,6 +9,7 @@ public class SnakeFactory
     private CameraMovement _cameraMovement;
     private AppleSpawnInitiator _appleSpawnInitiator;
     private StateHandlerRoom _stateHandlerRoom;
+    private IAppleHandler _appleHandler;
 
     public void InitStateHandlerRoom(StateHandlerRoom stateHandlerRoom)
     {
@@ -16,30 +17,63 @@ public class SnakeFactory
     }
 
     public void Init(CameraMovement cameraMovement, 
-        AppleSpawnInitiator appleSpawnInitiator)
+        AppleSpawnInitiator appleSpawnInitiator,
+        IAppleHandler appleHandler)
     {
         _cameraMovement = cameraMovement;
         _appleSpawnInitiator = appleSpawnInitiator;
+        _appleHandler = appleHandler;
     }
 
-    public SnakeView CreatePlayer(Vector3 position, string name, Color color, string id, bool isMultiplayer, Player player = null)
+    /*private SnakeView CreateBaseSnake(
+        Vector3 position, 
+        Quaternion rotation, 
+        string name, 
+        Color color, 
+        string id)
     {
-        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
-
-        Camera camera = _cameraMovement.GetComponent<Camera>();
-        PlayerClickHandler mouseClickHandler = snakeView.AddComponent<PlayerClickHandler>();
-        mouseClickHandler.Init(camera);
+        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, rotation);
 
         SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
+        snakeBodyParts.Init(this, color);
+
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
-        SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
         SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
         snakeNameView.SetName(name);
         snakeNameView.LookAtTarget(_cameraMovement.transform);
 
         snakeView.AddComponent<SnakeCollisionHandler>();
 
+        SnakeScoreModel snakeScoreModel = new();
+        SnakeScorePresenter snakeScorePresenter = new(
+            snakeScoreModel,
+            snakeBodyParts,
+            snakeMovement);
+
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
+
+        return snakeView;
+    }*/
+
+    public SnakeView CreatePlayer(
+        Vector3 position, 
+        string name, 
+        Color color, 
+        string id, 
+        bool isMultiplayer, 
+        Player player = null)
+    {
+        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
+
+        SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
         snakeBodyParts.Init(this, color);
+
+        SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
+        SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
+
+        SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
+        snakeNameView.SetName(name);
+        snakeNameView.LookAtTarget(_cameraMovement.transform);
 
         SnakeScoreModel snakeScoreModel = new();
         SnakeScorePresenter snakeScorePresenter = new(
@@ -50,7 +84,10 @@ public class SnakeFactory
         snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
 
         _cameraMovement.SetTarget(snakeView.transform);
+        Camera camera = _cameraMovement.GetComponent<Camera>();
 
+        PlayerClickHandler playerClickHandler = snakeView.AddComponent<PlayerClickHandler>();
+        playerClickHandler.Init(camera);
 
         if (isMultiplayer == true)
         {
@@ -61,11 +98,11 @@ public class SnakeFactory
                 snakeMovement, 
                 snakeRotation, 
                 snakeScorePresenter,
-                mouseClickHandler);
+                playerClickHandler);
         }
         else
         {
-            snakeView.AddComponent<SinglPlayerHandler>().Init(mouseClickHandler, snakeRotation);
+            snakeView.AddComponent<SinglPlayerHandler>().Init(playerClickHandler, snakeRotation);
         }
 
         return snakeView;
@@ -85,11 +122,10 @@ public class SnakeFactory
 
         SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
         SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
+
         SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
         snakeNameView.SetName(name);
         snakeNameView.LookAtTarget(_cameraMovement.transform);
-
-        snakeView.AddComponent<SnakeCollisionHandler>();
 
         Vector3 targetPoint = new(player.Direction.x, player.Direction.y, player.Direction.z);
         snakeRotation.SetRotateDirection(targetPoint);
@@ -98,6 +134,7 @@ public class SnakeFactory
         SnakeScorePresenter snakeScorePresenter = new(snakeScoreModel, snakeBodyParts, snakeMovement);
 
         snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, snakeColor, id);
+
         snakeView.AddComponent<EnemyMultiplayerHandler>().Init(
             id,
             _stateHandlerRoom,
@@ -106,6 +143,34 @@ public class SnakeFactory
             snakeMovement, 
             snakeScorePresenter,
             snakeView);
+
+        return snakeView;
+    }
+
+    public SnakeView CreateBot(Vector3 position, Color color, string id, string name)
+    {
+        SnakeView snakeView = Object.Instantiate(_prefabSnake, position, Quaternion.identity);
+
+        SnakeBodyParts snakeBodyParts = snakeView.GetComponent<SnakeBodyParts>();
+        snakeBodyParts.Init(this, color);
+
+        SnakeNameView snakeNameView = snakeView.GetComponent<SnakeNameView>();
+        snakeNameView.SetName(name);
+        snakeNameView.LookAtTarget(_cameraMovement.transform);
+
+        SnakeMovement snakeMovement = snakeView.GetComponent<SnakeMovement>();
+        SnakeRotation snakeRotation = snakeView.GetComponent<SnakeRotation>();
+
+        snakeView.AddComponent<BotSnakeControlHandler>()
+            .Init(_appleHandler, snakeRotation);
+
+        SnakeScoreModel snakeScoreModel = new();
+        SnakeScorePresenter snakeScorePresenter = new(
+            snakeScoreModel,
+            snakeBodyParts,
+            snakeMovement);
+
+        snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
 
         return snakeView;
     }
