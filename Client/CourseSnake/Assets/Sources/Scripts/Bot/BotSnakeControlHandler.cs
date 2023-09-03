@@ -59,6 +59,9 @@ public class BotSnakeControlHandler : MonoBehaviour
     {
         if (_appleHandler.TryGetRandomApple(out _currentApple))
         {
+            if (_currentApple == null)
+                return;
+
             _snakeRotation.SetRotateDirection(_currentApple.transform.position);
             _currentApple.Destroyed += OnAppleDestroyed;
         }

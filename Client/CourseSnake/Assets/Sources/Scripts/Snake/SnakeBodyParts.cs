@@ -58,6 +58,8 @@ public class SnakeBodyParts : MonoBehaviour
 
     public void SetBodyPart(int value)
     {
+        value = Math.Min(value, GameConfig.MaxSnakeLength);
+
         int partsCount = _snakeParts.Count - 1;
 
         if (partsCount == value)

@@ -78,8 +78,11 @@ public class MultiplayerAppleSpawnHandler : IAppleHandler
         _stateHandlerRoom.SendPlayerData("RemoveApple", key);
     }
 
-    private void OnAppleInited(Vector3 spawnPosition, float reward)
+    private void OnAppleInited(Vector3 spawnPosition, float reward, bool overLimit)
     {
+        if (_apples.Count >= GameConfig.MaxApples && overLimit == false)
+            return;
+
         MyVector3 position = new(spawnPosition);
 
         Dictionary<string, object> data = new()

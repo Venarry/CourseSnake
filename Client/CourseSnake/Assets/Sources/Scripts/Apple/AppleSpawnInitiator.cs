@@ -10,7 +10,7 @@ public class AppleSpawnInitiator : MonoBehaviour
     private ISnakeHandler _snakeHandler;
     private bool _isInitialized;
 
-    public event Action<Vector3, float> Inited;
+    public event Action<Vector3, float, bool> Inited;
 
     public void Init(ISnakeHandler snakeHandler)
     {
@@ -25,15 +25,20 @@ public class AppleSpawnInitiator : MonoBehaviour
 
         _currentTime += Time.deltaTime;
 
+        float minSpawnTime = 0.2f;
         int snakeCount = _snakeHandler.SnakeCount + _snakeHandler.BotsCount;
+        
 
         if (snakeCount == 0)
             return;
 
-        if(_currentTime >= _baseSpawnTime / snakeCount)
+        float baseSpawnTime = _baseSpawnTime / snakeCount;
+        float targetSpawnTime = Math.Max(minSpawnTime, baseSpawnTime);
+
+        if (_currentTime >= targetSpawnTime)
         {
             _currentTime = 0;
-            InitRandomApple();
+            InitRandomAppleOnMap();
         }
     }
 
@@ -41,7 +46,7 @@ public class AppleSpawnInitiator : MonoBehaviour
     {
         for (int i = 0; i < count; i++)
         {
-            InitRandomApple();
+            InitRandomAppleOnMap();
         }
     }
 
@@ -50,16 +55,16 @@ public class AppleSpawnInitiator : MonoBehaviour
         _spawnRange = spawnRange;
     }
 
-    public void InitSpawn(Vector3 position, float reward)
+    public void InitSpawn(Vector3 position, float reward, bool overLimit)
     {
-        Inited?.Invoke(position, reward);
+        Inited?.Invoke(position, reward, overLimit);
     }
 
-    private void InitRandomApple()
+    private void InitRandomAppleOnMap()
     {
         Vector3 spawnPosition = CreatePointBySquad();
-        float reward = UnityEngine.Random.Range(0.3f, 1f);
-        Inited?.Invoke(spawnPosition, reward);
+        float reward = UnityEngine.Random.Range(0.5f, 1f);
+        Inited?.Invoke(spawnPosition, reward, false);
     }
 
     private Vector3 CreatePointByRound()

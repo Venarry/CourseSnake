@@ -15,11 +15,13 @@ public class Apple : MonoBehaviour
     public void SetReward(float reward)
     {
         float minReward = 0.1f;
+        float maxReward = 1f;
 
-        if(reward < minReward)
-            reward = minReward;
+        reward = Mathf.Clamp(reward, minReward, maxReward);
 
         _reward = reward;
+
+        //GetComponentInChildren<MeshRenderer>().material.color = Color.Lerp(Color.white, _maxRewardColor, _reward);
         transform.localScale = new Vector3(_reward, _reward, _reward);
     }
 

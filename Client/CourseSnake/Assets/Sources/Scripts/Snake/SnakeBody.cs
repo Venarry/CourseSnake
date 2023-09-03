@@ -17,19 +17,8 @@ public class SnakeBody : MonoBehaviour
     public void Destroy()
     {
         float reward = transform.localScale.x;
-        _appleSpawnInitiator.InitSpawn(transform.position, reward);
+        _appleSpawnInitiator.InitSpawn(transform.position, reward, overLimit: true);
 
         Destroy(gameObject);
     }
-
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if(other.TryGetComponent(out SnakeBodyParts snake))
-        {
-            if (snake == _owner)
-                return;
-
-            snake.Destroy();
-        }
-    }*/
 }

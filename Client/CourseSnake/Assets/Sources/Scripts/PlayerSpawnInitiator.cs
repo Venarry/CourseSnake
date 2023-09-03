@@ -51,7 +51,6 @@ public class PlayerSpawnInitiator : MonoBehaviour
 
     public void InitBot()
     {
-        Debug.Log("inited");
         Vector3 spawnPosition = CreateSpawnPosition();
 
         string name = BotNameDataSource.GetRandomName();
