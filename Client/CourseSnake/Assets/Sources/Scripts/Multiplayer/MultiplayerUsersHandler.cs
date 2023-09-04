@@ -16,7 +16,6 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
 
     public event Action<SnakeView> PlayerSpawned;
     public event Action<SnakeView> BotSpawned;
-    public event Action<SnakeView> BotRemoved;
     public event Action<SnakeView> SnakeSpawned;
     public event Action<SnakeView> SnakeRemoved;
 
@@ -53,11 +52,9 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         _mapMultiplayerHandler.EnemyJoined += OnEnemyJoin;
         _mapMultiplayerHandler.UserLeaved += OnUserLeave;
         _mapMultiplayerHandler.EnemyDead += OnUserLeave;
-
-        _lobbyRoomHandler.PlayersCountChanged += OnPlayersCountChange;
     }
 
-    private void OnPlayersCountChange(int count)
+    public void OnPlayersCountChange(int count)
     {
         if (count > 1)
         {
@@ -81,8 +78,11 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         _mapMultiplayerHandler.PlayerJoined -= OnPlayerJoin;
         _mapMultiplayerHandler.EnemyJoined -= OnEnemyJoin;
         _mapMultiplayerHandler.UserLeaved -= OnUserLeave;
+    }
 
-        _lobbyRoomHandler.PlayersCountChanged -= OnPlayersCountChange;
+    public void SetSpawnBotsState(bool state)
+    {
+        CanSpawnBots = state;
     }
 
     private void OnBotInit(Vector3 position, string name, Color color)
@@ -122,7 +122,7 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         SnakeSpawned?.Invoke(enemy);
     }
 
-    private void DestroyBots()
+    public void DestroyBots()
     {
         for (int i = _bots.Count - 1; i >= 0; i--)
         {

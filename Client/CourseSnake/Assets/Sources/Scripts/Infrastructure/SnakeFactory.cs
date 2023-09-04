@@ -102,7 +102,8 @@ public class SnakeFactory
         }
         else
         {
-            snakeView.AddComponent<SinglPlayerHandler>().Init(playerClickHandler, snakeRotation);
+            snakeView.AddComponent<SinglePlayerSnakeHandler>()
+                .Init(playerClickHandler, snakeRotation, snakeMovement);
         }
 
         return snakeView;

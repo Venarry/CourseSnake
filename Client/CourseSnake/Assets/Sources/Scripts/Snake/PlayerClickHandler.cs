@@ -45,7 +45,7 @@ public class PlayerClickHandler : MonoBehaviour
             point = ray.GetPoint(distance);
 
             Vector3 targetPoint = point;
-            float minPointDistance = 2f;
+            float minPointDistance = 5f;
 
             if (Vector3.Distance(transform.position, targetPoint) < minPointDistance)
             {

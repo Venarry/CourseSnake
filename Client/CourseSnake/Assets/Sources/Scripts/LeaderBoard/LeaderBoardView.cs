@@ -40,6 +40,7 @@ public class LeaderBoardView : MonoBehaviour
         _leadersInBoard.Add(leaderBoardPlayer);
 
         snake.ScoreChanged += OnScoreChange;
+        //snake.Destroyed += OnSnakeRemoved;
         RefreshLeaderBoard();
     }
 
@@ -52,6 +53,7 @@ public class LeaderBoardView : MonoBehaviour
         _leadersInBoard.Remove(currentPlayer);
 
         snake.ScoreChanged -= OnScoreChange;
+        //snake.Destroyed -= OnSnakeRemoved;
         Destroy(currentPlayer.gameObject);
         RefreshLeaderBoard();
     }

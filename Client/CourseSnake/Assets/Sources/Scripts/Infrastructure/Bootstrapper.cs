@@ -28,9 +28,6 @@ public class Bootstrapper : MonoBehaviour
         _playerSpawnInitiator.SetArea(mapSize);
         _appleSpawnInitiator.SetSpawnRange(mapSize);
 
-        ISnakeHandler snakeHandler;
-        IAppleHandler appleHandler;
-
         try
         {
             if (await stateHandlerRoom.JoinOrCreateAny() == false)
@@ -38,48 +35,56 @@ public class Bootstrapper : MonoBehaviour
 
             snakeFactory.InitStateHandlerRoom(stateHandlerRoom);
 
-            MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
-            MultiplayerUsersHandler multiplayerUserHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUsersHandler>();
+            MultiplayerAppleSpawnHandler appleSpawnHandler = new(
+                stateHandlerRoom,
+                _appleSpawnInitiator,
+                appleFactory);
 
-            multiplayerUserHandler.Init(mapMultiplayerHandler, 
+            snakeFactory.Init(_camera, _appleSpawnInitiator, appleSpawnHandler);
+
+            MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
+            MultiplayerUsersHandler multiplayerUsersHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUsersHandler>();
+
+            multiplayerUsersHandler.Init(mapMultiplayerHandler, 
                 stateHandlerRoom, 
                 _playerSpawnInitiator, 
                 snakeFactory,
                 lobbyRoomHandler);
 
-            _snakeDieReaction.Init(multiplayerUserHandler);
+            _snakeDieReaction.Init(multiplayerUsersHandler);
 
-            MultiplayerAppleSpawnHandler appleSpawnHandler = new(
-                stateHandlerRoom, 
-                _appleSpawnInitiator, 
-                appleFactory);
+            _leaderBoardView.Init(multiplayerUsersHandler, leaderBoardPlayerDataFactory);
+            _miniMapView.Init(multiplayerUsersHandler, mapSize);
 
-            appleHandler = appleSpawnHandler;
-            snakeHandler = multiplayerUserHandler;
+            _appleSpawnInitiator.Init(multiplayerUsersHandler);
+            _appleSpawnInitiator.InitRandomApples(20);
+
+            MultiplayerSpawnBotsCondition multiplayerSpawnBotsCondition = new(
+                lobbyRoomHandler, 
+                _playerSpawnInitiator, 
+                multiplayerUsersHandler);
+
             Debug.Log("Start Multiplayer");
         }
         catch
         {
-            SinglPlayerUserHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
+            SinglePlayerAppleHandler singlePlayerAppleHandler = new(_appleSpawnInitiator, appleFactory);
+
+            snakeFactory.Init(_camera, _appleSpawnInitiator, singlePlayerAppleHandler);
+
+            SinglePlayerUsersHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(singlPlayerUserHandler);
 
-            SinglePlayerAppleHandler singlePlayerAppleHandler = new();
+            _appleSpawnInitiator.Init(singlPlayerUserHandler);
+            _leaderBoardView.Init(singlPlayerUserHandler, leaderBoardPlayerDataFactory);
+            _miniMapView.Init(singlPlayerUserHandler, mapSize);
 
-            appleHandler = singlePlayerAppleHandler;
-            snakeHandler = singlPlayerUserHandler;
+            _appleSpawnInitiator.InitRandomApples(20);
+            _playerSpawnInitiator.InitBots(GameConfig.BotsCount);
+
             Debug.Log("Start Singlplayer");
         }
 
-        snakeFactory.Init(_camera, _appleSpawnInitiator, appleHandler);
-
-        _appleSpawnInitiator.Init(snakeHandler);
-        _appleSpawnInitiator.InitRandomApples(20);
-
-        _leaderBoardView.Init(snakeHandler, leaderBoardPlayerDataFactory);
         _playerSpawnInitiator.SetMenuState(true);
-
-        _miniMapView.Init(snakeHandler, mapSize);
-
-        //_playerSpawnInitiator.InitBots(GameConfig.BotsCount);
     }
 }

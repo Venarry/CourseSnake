@@ -14,7 +14,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
     private ColyseusRoom<LobbyState> _activeLobby;
 
     public event Action<int> PlayersCountChanged;
-    private Dictionary<string, IndexedDictionary<string, object>> _rooms;
+    private Dictionary<string, IndexedDictionary<string, object>> _rooms = new();
 
     public event Action<IndexedDictionary<string, object>> RoomDataUpdated;
     public event Action<string> RoomRemoved;
@@ -30,10 +30,17 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
         if (Instance != this)
             return;
 
-        InitializeClient();
-        DontDestroyOnLoad(gameObject);
-        ConnectToLobby();
-        _rooms = new();
+        try
+        {
+            InitializeClient();
+            DontDestroyOnLoad(gameObject);
+
+            ConnectToLobby();
+        }
+        catch
+        {
+            Debug.LogWarning("Dont connect to lobby");
+        }
     }
 
     private void OnDisable()
