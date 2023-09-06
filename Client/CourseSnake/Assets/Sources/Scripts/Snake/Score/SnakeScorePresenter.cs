@@ -9,7 +9,12 @@ public class SnakeScorePresenter
 
     public event Action<float> ScoreChanged;
 
-    public SnakeScorePresenter(SnakeScoreModel snakeScoreModel, SnakeBodyParts snakeBodyParts, SnakeMovement snakeMovement)
+    public float Score => _snakeScoreModel.Score;
+
+    public SnakeScorePresenter(
+        SnakeScoreModel snakeScoreModel, 
+        SnakeBodyParts snakeBodyParts, 
+        SnakeMovement snakeMovement)
     {
         _snakeScoreModel = snakeScoreModel;
         _snakeBodyParts = snakeBodyParts;

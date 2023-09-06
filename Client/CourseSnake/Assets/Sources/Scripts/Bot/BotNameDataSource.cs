@@ -19,6 +19,11 @@ public class BotNameDataSource
         "я не бот",
         "я бот разраба",
         "я не знал что ей 13",
+        "ОБЭМЭ",
+        "1000-7",
+        "0_o",
+        "Креветка",
+        "Люблю колу",
     };
 
     public static string GetRandomName() =>

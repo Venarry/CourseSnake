@@ -13,10 +13,10 @@ public class BotSnakeControlHandler : MonoBehaviour
 
         _appleHandler = appleHandler;
         _snakeRotation = snakeRotation;
-        TryFindNewApple();
         _isInitialized = true;
 
         gameObject.SetActive(true);
+        TryFindNewApple();
     }
 
     private void OnEnable()

@@ -1,19 +1,22 @@
 using System;
 using UnityEngine;
+using YG;
 
 public class SnakeDieReaction : MonoBehaviour
 {
     [SerializeField] private PlayerSpawnInitiator _spawnInitiator;
 
     private ISnakeHandler _spawnHandler;
+    private YandexGame _yandexGame;
     private SnakeView _currentSnake;
     private bool _isInitialized;
 
-    public void Init(ISnakeHandler snakeSpawnHandler)
+    public void Init(ISnakeHandler snakeSpawnHandler, YandexGame yandexGame)
     {
         gameObject.SetActive(false);
 
         _spawnHandler = snakeSpawnHandler;
+        _yandexGame = yandexGame;
         _isInitialized = true;
 
         gameObject.SetActive(true);
@@ -65,6 +68,7 @@ public class SnakeDieReaction : MonoBehaviour
     {
         _currentSnake.Destroyed -= OnPlayerDestroy;
         _spawnInitiator.SetMenuState(true);
+        _yandexGame._FullscreenShow();
         _currentSnake = null;
     }
 }

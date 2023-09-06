@@ -25,18 +25,17 @@ public class StateHandlerRoom : ColyseusManager<StateHandlerRoom>
         _room.Send(key, data);
     }
 
-    public async Task<bool> JoinOrCreateAny(string mapName = "", string password = "")
+    public async Task<ColyseusRoom<State>> JoinOrCreateAny(string mapName = "", string password = "")
     {
         Dictionary<string, object> roomMetaData = new()
         {
             { "RoomName", mapName },
             { "Password", password },
             { "Version", GameConfig.Version },
-
         };
 
         _room = await client.JoinOrCreate<State>(GameName, roomMetaData);
-        return _room != null;
+        return _room;
     }
 
     public async Task<bool> JoinOrCreateByVersion(string mapName = "", string password = "")

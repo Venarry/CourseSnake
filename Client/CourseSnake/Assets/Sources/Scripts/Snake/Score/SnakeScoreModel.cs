@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SnakeScoreModel
 {
-    private float _score;
+    public float Score { get; private set; }
 
     public event Action<float> ScoreChanged;
 
@@ -14,8 +14,8 @@ public class SnakeScoreModel
         if (value <= 0)
             return;
 
-        _score += value;
-        ScoreChanged?.Invoke(_score);
+        Score += value;
+        ScoreChanged?.Invoke(Score);
     }
 
     public void RemoveScore(float value)
@@ -23,15 +23,15 @@ public class SnakeScoreModel
         if (value <= 0)
             return;
 
-        if(_score <= 0)
+        if(Score <= 0)
             return;
 
-        _score -= value;
+        Score -= value;
 
-        if(_score < 0)
-            _score = 0;
+        if(Score < 0)
+            Score = 0;
 
-        ScoreChanged?.Invoke(_score);
+        ScoreChanged?.Invoke(Score);
     }
 
     public void SetScore(float value)
@@ -39,8 +39,8 @@ public class SnakeScoreModel
         if (value <= 0)
             return;
 
-        _score = value;
-        ScoreChanged?.Invoke(_score);
+        Score = value;
+        ScoreChanged?.Invoke(Score);
     }
 
 

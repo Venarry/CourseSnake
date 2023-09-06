@@ -1,3 +1,4 @@
+using UnityEngine;
 public class MultiplayerSpawnBotsCondition
 {
     private readonly LobbyRoomHandler _lobbyRoomHandler;
@@ -12,6 +13,7 @@ public class MultiplayerSpawnBotsCondition
         _spawnInitiator = playerSpawnInitiator;
         _multiplayerUsersHandler = multiplayerUsersHandler;
         _multiplayerUsersHandler.SetSpawnBotsState(false);
+        OnPlayersCountChange(_lobbyRoomHandler.PlayersCount);
 
         _lobbyRoomHandler.PlayersCountChanged += OnPlayersCountChange;
     }

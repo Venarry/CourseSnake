@@ -4,6 +4,7 @@ using GameDevWare.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,10 +13,11 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
     private const string LobbyName = "MyLobbyRoom";
 
     private ColyseusRoom<LobbyState> _activeLobby;
-
-    public event Action<int> PlayersCountChanged;
     private Dictionary<string, IndexedDictionary<string, object>> _rooms = new();
 
+    public int PlayersCount { get; private set; }
+
+    public event Action<int> PlayersCountChanged;
     public event Action<IndexedDictionary<string, object>> RoomDataUpdated;
     public event Action<string> RoomRemoved;
     public event Action RoomsLoaded;
@@ -35,7 +37,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
             InitializeClient();
             DontDestroyOnLoad(gameObject);
 
-            ConnectToLobby();
+            //ConnectToLobby();
         }
         catch
         {
@@ -66,7 +68,7 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
         return (string)metadata["Version"];
     }
 
-    private async void ConnectToLobby()
+    public async Task<ColyseusRoom<LobbyState>> ConnectToLobby()
     {
         _activeLobby = await client.JoinOrCreate<LobbyState>(LobbyName);
         _activeLobby.State.OnChange += OnStateDataChange;
@@ -74,6 +76,8 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
         _activeLobby.OnMessage<List<IndexedDictionary<string, object>>>("rooms", OnRoomsLoad);
         _activeLobby.OnMessage<List<object>>("+", OnRoomUpdate);
         _activeLobby.OnMessage<string>("-", OnRoomRemoved);
+
+        return _activeLobby;
     }
 
     private void OnStateDataChange(List<DataChange> changes)
@@ -83,7 +87,8 @@ public class LobbyRoomHandler : ColyseusManager<LobbyRoomHandler>
             switch (change.Field)
             {
                 case "PlayersCount":
-                    PlayersCountChanged?.Invoke(change.Value.ConvertTo<int>());
+                    PlayersCount = change.Value.ConvertTo<int>();
+                    PlayersCountChanged?.Invoke(PlayersCount);
                     break;
             }
         }

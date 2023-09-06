@@ -84,10 +84,13 @@ public class SnakeFactory
         snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
 
         _cameraMovement.SetTarget(snakeView.transform);
+        _cameraMovement.Init(snakeScorePresenter, snakeMovement);
         Camera camera = _cameraMovement.GetComponent<Camera>();
 
         PlayerClickHandler playerClickHandler = snakeView.AddComponent<PlayerClickHandler>();
         playerClickHandler.Init(camera);
+
+        snakeView.AddComponent<SnakeCollisionHandler>();
 
         if (isMultiplayer == true)
         {
@@ -170,6 +173,8 @@ public class SnakeFactory
             snakeScoreModel,
             snakeBodyParts,
             snakeMovement);
+
+        snakeView.AddComponent<SnakeCollisionHandler>();
 
         snakeView.Init(snakeScorePresenter, snakeBodyParts, snakeNameView, color, id);
 

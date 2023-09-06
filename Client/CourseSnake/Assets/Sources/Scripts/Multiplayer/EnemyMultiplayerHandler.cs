@@ -64,7 +64,7 @@ public class EnemyMultiplayerHandler : MonoBehaviour
 
     private void OnSnakeDestroy(SnakeView snake)
     {
-        _stateHandlerRoom.SendPlayerData("EnemyDestroyed", _id);
+        //_stateHandlerRoom.SendPlayerData("EnemyDestroyed", _id);
     }
 
     private void OnDataChange(List<DataChange> changes)

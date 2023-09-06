@@ -1,4 +1,5 @@
 using UnityEngine;
+using YG;
 
 public class Bootstrapper : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] private LeaderBoardView _leaderBoardView;
     [SerializeField] private AppleSpawnInitiator _appleSpawnInitiator;
     [SerializeField] private MiniMapView _miniMapView;
+    [SerializeField] private YandexGame _yandexGame;
 
     private async void Awake()
     {
@@ -21,7 +23,6 @@ public class Bootstrapper : MonoBehaviour
         LeaderBoardPlayerDataFactory leaderBoardPlayerDataFactory = new();
 
         SnakeFactory snakeFactory = new();
-        
 
         Vector2 mapSize = new(65, 65);
 
@@ -30,8 +31,8 @@ public class Bootstrapper : MonoBehaviour
 
         try
         {
-            if (await stateHandlerRoom.JoinOrCreateAny() == false)
-                return;
+            await lobbyRoomHandler.ConnectToLobby();
+            await stateHandlerRoom.JoinOrCreateAny();
 
             snakeFactory.InitStateHandlerRoom(stateHandlerRoom);
 
@@ -51,7 +52,7 @@ public class Bootstrapper : MonoBehaviour
                 snakeFactory,
                 lobbyRoomHandler);
 
-            _snakeDieReaction.Init(multiplayerUsersHandler);
+            _snakeDieReaction.Init(multiplayerUsersHandler, _yandexGame);
 
             _leaderBoardView.Init(multiplayerUsersHandler, leaderBoardPlayerDataFactory);
             _miniMapView.Init(multiplayerUsersHandler, mapSize);
@@ -73,7 +74,7 @@ public class Bootstrapper : MonoBehaviour
             snakeFactory.Init(_camera, _appleSpawnInitiator, singlePlayerAppleHandler);
 
             SinglePlayerUsersHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
-            _snakeDieReaction.Init(singlPlayerUserHandler);
+            _snakeDieReaction.Init(singlPlayerUserHandler, _yandexGame);
 
             _appleSpawnInitiator.Init(singlPlayerUserHandler);
             _leaderBoardView.Init(singlPlayerUserHandler, leaderBoardPlayerDataFactory);
