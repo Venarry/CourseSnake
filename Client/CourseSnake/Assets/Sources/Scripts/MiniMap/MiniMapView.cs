@@ -37,6 +37,7 @@ public class MiniMapView : MonoBehaviour
 
         _snakeHandler.PlayerSpawned += OnPlayerSpawn;
         _snakeHandler.SnakeSpawned += OnSnakeSpawn;
+        _snakeHandler.BotSpawned += OnSnakeSpawn;
     }
 
     private void OnDisable()
@@ -44,7 +45,9 @@ public class MiniMapView : MonoBehaviour
         if (_isInitialized == false)
             return;
 
+        _snakeHandler.PlayerSpawned -= OnPlayerSpawn;
         _snakeHandler.SnakeSpawned -= OnSnakeSpawn;
+        _snakeHandler.BotSpawned -= OnSnakeSpawn;
     }
 
     private void Update()

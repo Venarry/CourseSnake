@@ -30,7 +30,8 @@ public class LeaderBoardView : MonoBehaviour
             return;
 
         _spawnHandler.SnakeSpawned += OnSnakeSpawn;
-        _spawnHandler.SnakeRemoved += OnSnakeRemoved;
+        _spawnHandler.BotSpawned += OnSnakeSpawn;
+        //_spawnHandler.SnakeRemoved += OnSnakeRemoved;
     }
 
     private void OnSnakeSpawn(SnakeView snake)
@@ -40,7 +41,7 @@ public class LeaderBoardView : MonoBehaviour
         _leadersInBoard.Add(leaderBoardPlayer);
 
         snake.ScoreChanged += OnScoreChange;
-        //snake.Destroyed += OnSnakeRemoved;
+        snake.Destroyed += OnSnakeRemoved;
         RefreshLeaderBoard();
     }
 

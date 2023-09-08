@@ -11,6 +11,7 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
     private LobbyRoomHandler _lobbyRoomHandler;
     private PlayerSpawnInitiator _playerSpawnInitiator;
     private SnakeFactory _snakeFactory;
+    private SnakeView _player;
     private bool _isInitialized;
     private int _botId;
 
@@ -21,6 +22,7 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
 
     public int SnakeCount => _snakes.Count;
     public int BotsCount => _bots.Count;
+    public bool PlayerHasSpawn => _player != null;
     public bool CanSpawnBots { get; private set; }
 
     public void Init(MapMultiplayerHandler mapMultiplayerHandler,
@@ -93,14 +95,14 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         snake.Destroyed += OnBotDestroyed;
 
         BotSpawned?.Invoke(snake);
-        SnakeSpawned?.Invoke(snake);
+        //SnakeSpawned?.Invoke(snake);
     }
 
     private void OnBotDestroyed(SnakeView snake)
     {
         snake.Destroyed -= OnBotDestroyed;
         _bots.Remove(snake);
-        SnakeRemoved?.Invoke(snake);
+        //SnakeRemoved?.Invoke(snake);
     }
 
     private void OnPlayerJoin(string key, Player player)
@@ -110,6 +112,7 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
         SnakeView snake = _snakeFactory.CreatePlayer(spawnPosition, player.Name, snakeColor, key, true, player);
         _snakes.Add(key, snake);
 
+        _player = snake;
         PlayerSpawned?.Invoke(snake);
         SnakeSpawned?.Invoke(snake);
     }
@@ -156,6 +159,9 @@ public class MultiplayerUsersHandler : MonoBehaviour, ISnakeHandler
             _snakes[key].Destroy();
 
         SnakeView removedSnake = _snakes[key];
+
+        if (_player == removedSnake)
+            _player = null;
 
         _snakes.Remove(key);
         SnakeRemoved?.Invoke(removedSnake);

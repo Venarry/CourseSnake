@@ -220,11 +220,22 @@ export class StateHandlerRoom extends Room<State> {
         this.onMessage("PlayerSpawned", (client, data) => 
         {
             this.state.CreatePlayer(client.sessionId, data);
+
+            if(this.OwnerId == client.sessionId)
+            {
+                return;
+            }
+            
+            if(this.OwnerId == "" || this.state.players.size <= 1)
+            {
+                this.OwnerId = client.sessionId;
+            }
         });
 
         this.onMessage("PlayerDestroyed", (client) => 
         {
             this.state.RemovePlayer(client.sessionId);
+            this.OnRemovePlayer(client);
         });
 
         this.onMessage("CreateApple", (client, data) => 
@@ -278,7 +289,7 @@ export class StateHandlerRoom extends Room<State> {
 
     onJoin (client: Client) 
     {
-        if(this.OwnerId == "")
+        if(this.OwnerId == "" || this.clients.length <= 1)
         {
             this.OwnerId = client.sessionId;
         }
@@ -286,18 +297,28 @@ export class StateHandlerRoom extends Room<State> {
 
     onLeave (client) 
     {
-        this.state.RemovePlayer(client.sessionId);
+        if(this.state.players.has(client.sessionId))
+        {
+            this.state.RemovePlayer(client.sessionId);
+            this.OnRemovePlayer(client);
+        }
+    }
 
-        if(this.clients.length == 0)
+    OnRemovePlayer(client: Client)
+    {
+        if(this.state.players.size == 0)
             return;
 
         if(this.OwnerId == client.sessionId)
         {
-            this.OwnerId = this.clients[0].sessionId;
+            console.log("newHost");
+            this.OwnerId = this.state.players.keys().next().value;
+            //this.OwnerId = this.clients[0].sessionId;
         }
     }
 
-    onDispose () {
+    onDispose () 
+    {
         console.log("Dispose StateHandlerRoom");
     }
 }
