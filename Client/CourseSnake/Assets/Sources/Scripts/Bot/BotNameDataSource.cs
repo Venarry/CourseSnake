@@ -24,6 +24,11 @@ public class BotNameDataSource
         "0_o",
         "Креветка",
         "Люблю колу",
+        "амогус",
+        "spidermen",
+        "425234",
+        "asd",
+        "не трогайте меня",
     };
 
     public static string GetRandomName() =>

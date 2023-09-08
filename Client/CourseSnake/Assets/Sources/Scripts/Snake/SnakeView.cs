@@ -53,14 +53,6 @@ public class SnakeView : MonoBehaviour
         _snakeBodyParts.Destroyed -= OnSnakeDestroyed;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            _snakeScorePresenter.AddScore(10);
-        }
-    }
-
     public void Destroy()
     {
         _snakeBodyParts.Destroy();
