@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AppleSpawnInitiator : MonoBehaviour
 {
-    [SerializeField] private float _baseSpawnTime = 2f;
+    [SerializeField] private float _baseSpawnTime = 1f;
     [SerializeField] private Vector2 _spawnRange;
 
     private float _currentTime;

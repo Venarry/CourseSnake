@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using YG;
 
@@ -68,7 +69,13 @@ public class SnakeDieReaction : MonoBehaviour
     {
         _currentSnake.Destroyed -= OnPlayerDestroy;
         _spawnInitiator.SetMenuState(true);
-        _yandexGame._FullscreenShow();
+        StartCoroutine(ShowAdd());
         _currentSnake = null;
+    }
+
+    private IEnumerator ShowAdd()
+    {
+        yield return new WaitForSeconds(1f);
+        _yandexGame._FullscreenShow();
     }
 }
