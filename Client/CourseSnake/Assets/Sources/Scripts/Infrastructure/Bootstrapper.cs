@@ -17,7 +17,8 @@ public class Bootstrapper : MonoBehaviour
         StateHandlerRoom stateHandlerRoom = StateHandlerRoom.Instance;
         LobbyRoomHandler lobbyRoomHandler = LobbyRoomHandler.Instance;
 
-        _mapInfo.Init(lobbyRoomHandler);
+        BestScoreHandler bestScoreHandler = new();
+        _mapInfo.Init(lobbyRoomHandler, bestScoreHandler);
 
         AppleFactory appleFactory = new();
         LeaderBoardPlayerDataFactory leaderBoardPlayerDataFactory = new();
@@ -28,6 +29,8 @@ public class Bootstrapper : MonoBehaviour
 
         _playerSpawnInitiator.SetArea(mapSize);
         _appleSpawnInitiator.SetSpawnRange(mapSize);
+
+        ISnakeHandler snakeHandler;
 
         try
         {
@@ -45,6 +48,7 @@ public class Bootstrapper : MonoBehaviour
 
             MapMultiplayerHandler mapMultiplayerHandler = new GameObject("MapMultiplayerHandler").AddComponent<MapMultiplayerHandler>();
             MultiplayerUsersHandler multiplayerUsersHandler = new GameObject("MultiplayerUserHandler").AddComponent<MultiplayerUsersHandler>();
+            snakeHandler = multiplayerUsersHandler;
 
             multiplayerUsersHandler.Init(mapMultiplayerHandler, 
                 stateHandlerRoom, 
@@ -75,6 +79,7 @@ public class Bootstrapper : MonoBehaviour
 
             SinglePlayerUsersHandler singlPlayerUserHandler = new(_playerSpawnInitiator, snakeFactory);
             _snakeDieReaction.Init(singlPlayerUserHandler, _yandexGame);
+            snakeHandler = singlPlayerUserHandler;
 
             _appleSpawnInitiator.Init(singlPlayerUserHandler);
             _leaderBoardView.Init(singlPlayerUserHandler, leaderBoardPlayerDataFactory);
@@ -86,6 +91,8 @@ public class Bootstrapper : MonoBehaviour
             Debug.Log("Start Singlplayer");
         }
 
+        bestScoreHandler.Init(snakeHandler);
+        bestScoreHandler.LoadScore();
         _playerSpawnInitiator.SetMenuState(true);
     }
 }

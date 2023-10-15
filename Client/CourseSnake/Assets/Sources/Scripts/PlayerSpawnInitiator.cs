@@ -64,9 +64,10 @@ public class PlayerSpawnInitiator : MonoBehaviour
         Vector3 spawnPosition = CreateSpawnPosition();
 
         string name = _name.text;
+        name = name.Trim(' ');
 
         if (name == "")
-            name = "player";
+            name = "Игрок";
 
         SetMenuState(false);
 
